@@ -1,0 +1,79 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	.filter {
+		float: left;
+		textsize: 80%;
+		margin: 20px 5px;
+	}	
+</style>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+	
+     google.charts.load('current', {'packages':['controls', 'table']});
+     google.charts.setOnLoadCallback(drawTable);
+	  
+	function drawTable() {
+		var queryString = encodeURIComponent("SELECT 'col3', 'col4', 'col9'");
+		var pondQuery = new google.visualization.Query('https://www.google.com/fusiontables/gvizdata?tq=' + queryString + 'FROM 1L-zu7mgX9_sFgnP2QWf3drQ1MRUXgAEIiLteHabn');
+		
+		pondQuery.send(handleQueryResponse);
+	} 
+ 
+    function handleQueryResponse(response) {
+
+        if (response.isError()) {
+            alert('Error in query: ' + response.getMessage());response.getDetailedMessage();
+            return;
+        }
+
+		var data = response.getDataTable();
+		
+		var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+		
+		var myTable = new google.visualization.ChartWrapper({
+			chartType: 'Table',
+			containerId: 'pondMap_table',
+			dataTable: data,
+			options: {
+				width: '100%',
+				page: 'enable',
+				pageSize: 25,
+				allowHtml: true
+			}
+		});
+		
+		var filterTown= new google.visualization.ControlWrapper({
+			controlType: 'StringFilter',
+			containerId: 'filterTown_div',
+			options: {
+             filterColumnIndex: 2,
+			 matchType: 'any'
+        }
+		});
+		var filterPond= new google.visualization.ControlWrapper({
+			controlType: 'StringFilter',
+			containerId: 'filterPond_div',
+			options: {
+             filterColumnIndex: 0,
+			 matchType: 'any'
+        }
+		});
+		dashboard.bind([filterPond],[filterTown])
+		dashboard.bind([filterTown], [myTable]);
+		dashboard.draw(data);
+		}
+		 
+	</script>	
+</head>
+<body>
+	<div id="dashboard_div">	
+		<div id="filterPond_div" class="filter"></div>	
+		<div id="filterTown_div" class="filter"></div>	
+		<div id="pondMap_table"></div>
+	</div>
+	
+</body>
