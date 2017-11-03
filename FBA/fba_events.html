@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	.filter {
+		float: left;
+		font-size: 80%;
+		margin: 20px 5px;
+	}
+</style>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+     google.charts.load('current', {'packages':['controls', 'table']});
+     google.charts.setOnLoadCallback(drawTable);
+	  
+	function drawTable() {
+		var queryString = encodeURIComponent('SELECT A , B, F');
+		var eventsQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1-UNytwZV_XvXx2iWYI49xdLHIqidk7IrN2q4TpeEFls/gviz/tq?gid=0&headers=1&tq=' + queryString);
+		eventsQuery.send(handleQueryResponse);
+		
+	} 
+ 
+    function handleQueryResponse(response) {
+        if (response.isError()) {
+            alert('Error in query: ' + response.getMessage());response.getDetailedMessage();
+            return;
+        };
+		var data = response.getDataTable();
+		
+		
+		var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+		
+		var myTable = new google.visualization.ChartWrapper({
+			chartType: 'Table',
+			containerId: 'events_table',
+			dataTable: data,
+			options: {
+				width: '100%',
+				page: 'enable',
+				pageSize: 25,
+				allowHtml: true
+			}
+		});
+		
+		var filterDate= new google.visualization.ControlWrapper({
+			controlType: 'StringFilter',
+			containerId: 'filterDate_div',
+			options: {
+             filterColumnIndex: 1,
+			 matchType: 'any'
+        }
+		});
+		var filterAccess= new google.visualization.ControlWrapper({
+			controlType: 'StringFilter',
+			containerId: 'filterAccess_div',
+			options: {
+             filterColumnIndex: 0,
+			 matchType: 'any'
+        }
+		});
+		dashboard.bind([filterAccess],[filterDate]);
+		dashboard.bind([filterDate], [myTable]);
+		dashboard.draw(data);
+		}
+		 
+	</script>	
+</head>
+<body>
+	<div id="dashboard_div">	
+		<div id="filterAccess_div" class="filter"></div>	
+		<div id="filterDate_div" class="filter"></div>	
+		<div id="events_table"></div>
+	</div>
+</body>
+</html>
