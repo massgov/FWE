@@ -63,7 +63,7 @@
 
 /* Interaction states
 ----------------------------------*/
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #cbc7bd; background: #f8f7f6 url(images/ui-bg_fine-grain_10_f8f7f6-60x60.png) 50% 50% repeat; font-weight: bold; color: #654b24; }
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #cbc7bd; background: #f8f7f6 url(images/ui-bg-fine-grain-10-f8f7f6-60x60.png) 50% 50% repeat; font-weight: bold; color: #654b24; }
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #654b24; text-decoration: none; }
 .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: 1px solid #654b24; background: #654b24 url(images/ui-bg-fine-grain-65-654b24-60x60.png) 50% 50% repeat; font-weight: bold; color: #ffffff; }
 .ui-state-hover a, .ui-state-hover a:hover { color: #ffffff; text-decoration: none; }
