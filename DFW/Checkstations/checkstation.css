@@ -1,0 +1,143 @@
+	#tabs {
+		width: 100%;
+		height: auto;
+	}	
+	#map_canvas {
+		/*width: 720px; */
+		width: 100%;
+		height: 430px; 
+		margin-left:auto;
+		margin-right:auto;
+		
+	}
+	
+	/*make the ui btns smaller*/
+	.ui-button-text-only .ui-button-text {
+		padding-top: .1em;
+		padding-left: .1em;
+		padding-right: 1em;
+		padding-bottom: .2em;
+		font-size: .7em;
+	}
+
+	/*width of result table must be in pixels otherwise columns compress when switched to other species/district.  */
+	.result {
+		table-layout: fixed;
+		width: 685px;
+	}
+	
+	.result th {
+		text-align: center;
+	}
+	
+	/*Make the paging btns smaller*/
+	.paging_full_numbers .ui-button
+	{
+		padding: 0px 4px;
+	}
+	
+	  /* *** Add this for visible Scrolling ;) */
+    .ui-autocomplete {
+		max-height: 350px;
+		max-width: 170px;
+		overflow-y: auto;
+		overflow-x: hidden;
+		/* add padding to account for vertical scrollbar */
+		padding-right: 7px;
+	}
+	
+	/*Make sure the content of the tabs is rendered.  Will only render if div is moved left instead of empty*/
+		.ui-tabs .ui-tabs-hide {
+		position: absolute !important;
+		left: -10000px !important;
+		display:block !important;
+	}
+	
+	/* IE 6 doesn't support max-height
+	 * we use height instead, but this forces the menu to always be this tall
+	 */
+	* html .ui-autocomplete {
+		height: 100px;
+	}
+ 
+	.cmb {
+		margin: 15px;
+		float: left;
+		font-size: 80%;
+	}
+	
+	.cmb label {
+		display: block;
+	}
+	
+	/*.ui-menu-item {
+		font-size: 70%;
+	}*/
+	
+	
+	#queryTable {
+		width: 95%;
+		/*margin-top: 10px;*/
+		/*background-color: white;*/
+		/*padding: 10px;*/
+		font-size:80%;
+	} 
+	
+	#queryTable td{
+		background-color: white;
+	}
+	
+	.btn-slide a:link{
+		text-decoration: none;
+	}
+	#panel {
+		display: none;
+	}
+	
+	#panel li {
+		float: left;
+		margin-right: 20px;
+		margin-bottom: 20px;
+	}
+	/*Clear the float so that the header doesn't overlap with the list*/
+	#panel h3 {
+		clear:both;
+	}
+	#tabs-info, #tabs-map, #tabs-table {
+		margin: 0;
+		padding: 0;
+	}
+	#tabs-info{
+		/*font-weight: bold;*/
+	}
+	.ui-tabs-panel table{
+		font-size: 80%;
+	}	
+	#frmDistrict {
+		margin-left: 10px;
+		margin-bottom: 15px;
+		padding: 0;
+		
+	}
+	.frmChk fieldset {
+		float: left;
+		display: inline;
+		margin-bottom:15px;
+		margin-right: 0;
+		padding: 0;
+		border: none;
+	}
+	.frmChk legend {
+		font-size: 80%;
+	}
+	.specialHours {
+		color: #990000;
+	}
+	
+	#tabs p {
+		font-size: 80%;
+	}
+	
+	#tabs-info li {
+		font-size: 80%;
+	}
