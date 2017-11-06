@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	.filter {
+		float: left;
+		textsize: 80%;
+		margin: 20px 5px;
+	}	
+</style>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+	
+     google.charts.load('current', {'packages':['controls', 'table']});
+     google.charts.setOnLoadCallback(drawTable);
+	  
+	function drawTable() {
+		var queryString = encodeURIComponent('SELECT A, B, C, E, F');
+		var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1KK8GV-eQQjSkqpzPaPLEGGrYInGjSBLOnuBBJ6_IhhI/gviz/tq?gid=0&headers=1&tq=' + queryString);
+		
+		fishquery.send(handleQueryResponse);
+	} 
+ 
+    function handleQueryResponse(response) {
+
+        if (response.isError()) {
+            alert('Error in query: ' + response.getMessage());response.getDetailedMessage();
+            return;
+        }
+
+		var data = response.getDataTable();
+		
+		var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+		
+		var myTable = new google.visualization.ChartWrapper({
+			chartType: 'Table',
+			containerId: 'trout_table',
+			dataTable: data,
+			options: {
+				width: '100%',
+				page: 'enable',
+				pageSize: 25
+			}
+		});
+		
+		var filterWater= new google.visualization.ControlWrapper({
+			controlType: 'StringFilter',
+			containerId: 'filter_div',
+			options: {
+             filterColumnIndex: 1,
+			 matchType: 'any'
+        }
+		});
+		
+		var filterTown = new google.visualization.ControlWrapper({
+			controlType: 'StringFilter',
+			containerId: 'filterTown_div',
+			options: {
+             filterColumnIndex: 2
+        }
+		});
+		
+		var filterDistrict = new google.visualization.ControlWrapper({
+			controlType: 'StringFilter',
+			containerId: 'filterDist_div',
+			options: {
+             filterColumnIndex: 4
+        }
+		});
+		
+		dashboard.bind([filterTown], [filterWater]);
+		dashboard.bind([filterWater], [filterDistrict]);
+		dashboard.bind([filterDistrict], [myTable]);
+		dashboard.draw(data);
+		}
+		 
+	</script>
+	
+</head>
+<body>
+	<div id="dashboard_div">
+		<div id="filter_div" class="filter"></div>
+		<div id="filterTown_div" class="filter"></div>
+		<div id="filterDist_div" class="filter"></div>
+		<div id="trout_table"></div>
+	</div>
+	
+</body>
+</html>
