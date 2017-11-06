@@ -1,0 +1,118 @@
+html,body,#mapDiv{
+ padding:0;
+ margin:0;
+ height:100%;
+}
+/* #topHeader{
+position:relative; min-height:2.2em;
+} */
+.esriScalebarLabel{
+font-weight:bold;color:black;
+}
+.claro .dijitButtonNode * {
+    font-family: Arial, Helvetica, sans-serif;
+	color:black;
+}
+.dijitHelpIcon {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/help.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.dijitPrintIcon {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/print.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.dijitAboutIcon {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/DFGlogo_icon.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.dijitLayersIcon {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/layers.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.dijitWildlandsIcon {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/compass.gif');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.dijitFactSheet {
+  background-image: url('../images/pdf.gif');
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+}
+.dijitFactSheetDisabled {
+  background-image: url('../images/pdf_grey.gif');
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+}
+.dijitPermalink  {background-image: url('../images/permalink.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  }
+.dijitPermalinkDisabled{
+  background-image: url('../images/permalink_grey.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+
+.esriScalebar { width:auto; left: 0; bottom: 10px; color: Black; padding: 8px 32px 8px 8px; background-color: White; opacity: 0.85; filter: alpha(opacity=85); border-radius: 4px; }
+
+.esriPopup .actionsPane .zoomTo {
+     display: none;
+}
+.esriPopup .titleButton.maximize {
+     display: none;
+}
+/* Put the popup above other map elements */
+/*
+.esriPopup {
+z-index: 999 !important;
+}
+*/
+@media screen and (max-width: 745px) {
+#legend {
+display:none;
+z-index: 300;
+}
+#dfwLogoImage {
+display:none;
+z-index: 300;
+}
+#deptTitle {
+display:none;
+}
+#button_span {
+display:none;
+}
+#topHeader{
+position:relative; min-height:4.7em;
+}
+.dld_hdr {
+color:green;
+}
