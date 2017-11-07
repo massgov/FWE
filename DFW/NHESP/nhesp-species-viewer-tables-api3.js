@@ -299,20 +299,4 @@ $(function() {
 		$( "#selTown" ).toggle();
 	});
 	$('#townDiv > input').attr('id', 'cmbTown');
-	
-	//JQUERY SLIDER
-	$(".btn-slide").click(function(){
-		$("#panel").slideToggle("slow");
-		if ($(this).text() == "Show Additional Info"){
-		$(this).toggleClass("active").text("Hide Additional Info"); return false;
-		$("additionalInfo").attr('aria-expanded', 'true');
-		$("#btn").addClass("ui-icon ui-icon-triangle-1-n");
-		}
-		else
-		{
-		$(this).toggleClass("active").text("Show Additional Info");
-		$("btn").removeClass("ui-icon-triangle-1-n");
-		$("#btn").addClass("ui-icon ui-icon-triangle-1-s");
-		}
-	});
 });
