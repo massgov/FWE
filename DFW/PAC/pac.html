@@ -22,7 +22,7 @@
 		/*var queryString = encodeURIComponent("SELECT 'COMPANY NAME','PHONE','ADDRESS' FROM 1YDJoiYulOciALdx4OhiCNp0lquTSO42MLuhAx8B8");
 		var pacQuery = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq=' + queryString);*/
 		
-		var pacQuery = encodeURIComponent('SELECT A, B, F, D');
+		var queryString = encodeURIComponent('SELECT A, B, F, D');
 		var pacQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1xLTtWiBkS3t8rKyA_fbGNUgIFmejq-oIIQnc7X1bmhs/gviz/tq?gid=0&headers=1&tq=' + queryString);
 		
 		pacQuery.send(handleQueryResponse);
