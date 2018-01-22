@@ -22,10 +22,8 @@
 		/*var queryString = encodeURIComponent("SELECT 'COMPANY NAME','PHONE','ADDRESS' FROM 1YDJoiYulOciALdx4OhiCNp0lquTSO42MLuhAx8B8");
 		var pacQuery = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq=' + queryString);*/
 		
-		var queryString = encodeURIComponent('SELECT B, G, D, E');
+		var queryString = encodeURIComponent('SELECT B, C, G, D, E');
 		var pacQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1xLTtWiBkS3t8rKyA_fbGNUgIFmejq-oIIQnc7X1bmhs/gviz/tq?gid=0&headers=1&tq=' + queryString);
-		
-		pacQuery.send(handleQueryResponse);
 		
 		pacQuery.send(handleQueryResponse);
 	} 
@@ -36,6 +34,15 @@
             return;
         }
 		var data = response.getDataTable();
+	    	//modify table data so correctly sorted by company name, not hyperlink
+	    	var numRows=data.getNumberOfRows();
+	    
+	    	for (var i=0; i<numRows; i++) {
+           	var linkWithName = data.getFormattedValue(i, 2);
+            	var rawName=data.getValue(i,1);
+           	 data.setValue(i, 2, rawName); // cell value is what is sorted on, this should be raw name, not a hyperlink string
+            	data.setFormattedValue(i, 2, linkWithName); // this is what our visualization will display
+        	}
 		
 		var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
 		
@@ -48,8 +55,8 @@
 				page: 'enable',
 				pageSize: 25,
 				allowHtml: true
-			}
-		
+			},
+		view: {'columns':[0,2,3,4]} // Hide the raw name column
 		});
 		
 		var filterTown = new google.visualization.ControlWrapper({
