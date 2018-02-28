@@ -18,7 +18,7 @@
      google.charts.setOnLoadCallback(drawTable);
 	  
 	function drawTable() {
-		var queryString = encodeURIComponent('SELECT A, B, C, E, F');
+		var queryString = encodeURIComponent('SELECT A, B, C, E, G');
 		var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/gviz/tq?gid=0&headers=1&tq=' + queryString);
 		
 		fishquery.send(handleQueryResponse);
