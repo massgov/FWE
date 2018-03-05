@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,20 +18,27 @@
      google.charts.setOnLoadCallback(drawTable);
 	  
 	function drawTable() {
-		var queryString = encodeURIComponent('SELECT A, B, C, E, F');
-		var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1KK8GV-eQQjSkqpzPaPLEGGrYInGjSBLOnuBBJ6_IhhI/gviz/tq?gid=0&headers=1&tq=' + queryString);
+		var queryString = encodeURIComponent('SELECT A, B, C, E, G');
+		var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/gviz/tq?gid=0&headers=1&tq=' + queryString);
 		
 		fishquery.send(handleQueryResponse);
 	} 
  
     function handleQueryResponse(response) {
-
         if (response.isError()) {
             alert('Error in query: ' + response.getMessage());response.getDetailedMessage();
             return;
         }
-
 		var data = response.getDataTable();
+		
+		// Modify table data so it is correctly sorted by pond name AND clickable
+        	var numRows = data.getNumberOfRows();
+        	for (var i=0; i<numRows; i++) {
+            		var textDate = data.getFormattedValue(i, 4);
+            		var rawDate=data.getValue(i, 0);
+            		data.setValue(i, 0, rawDate); // cell value is what is sorted on, this should be formatted as date
+            		data.setFormattedValue(i, 0, textDate); // this is what our visualization will display whihc includes text when waterbody is unstocked
+        	}
 		
 		var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
 		
@@ -44,7 +50,8 @@
 				width: '100%',
 				page: 'enable',
 				pageSize: 25
-			}
+			},
+			view: {'columns': [0,1,2,3]} // Hide the raw name column from view
 		});
 		
 		var filterWater= new google.visualization.ControlWrapper({
@@ -73,8 +80,7 @@
 		});
 		
 		dashboard.bind([filterTown], [filterWater]);
-		dashboard.bind([filterWater], [filterDistrict]);
-		dashboard.bind([filterDistrict], [myTable]);
+		dashboard.bind([filterWater], [myTable]);
 		dashboard.draw(data);
 		}
 		 
@@ -85,7 +91,6 @@
 	<div id="dashboard_div">
 		<div id="filter_div" class="filter"></div>
 		<div id="filterTown_div" class="filter"></div>
-		<div id="filterDist_div" class="filter"></div>
 		<div id="trout_table"></div>
 	</div>
 	
