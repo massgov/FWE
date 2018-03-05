@@ -260,7 +260,7 @@ require([
 		var waterbodyCentroids = new FeatureLayer(waterCentroidURL, {
 			//infoTemplate : new InfoTemplate("<b>${NAME}</b>", "NO STOCKING OCCURED"),
 			mode : 1, // 1 =.MODE_ONDEMAND,
-			id : "Waterbody Points",
+			id : "Stocked Waterbodies",
 			outFields : ["STK_WB_ID"],
 			//maxScale : 120001,
 			visible:false
@@ -269,7 +269,7 @@ require([
 		var noStockWaterbodyCentroids = new FeatureLayer(nonStockedWaterCentroidURL, {
 			infoTemplate : new InfoTemplate("<b>${mdfw_name}</b>", "Coming Soon"),
 			mode : 1, // 1 =.MODE_ONDEMAND,
-			id : "Not Currently Stocked",
+			id : "Coming Soon",
 			outFields : ["STK_WB_ID","mdfw_name"],
 			//maxScale : 120001,
 			visible:false
