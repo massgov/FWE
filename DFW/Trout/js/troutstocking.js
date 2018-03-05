@@ -103,7 +103,9 @@ require([
 
 		}, "TownSelect");
 	townSelect.startup();
-		 	
+	//Test URL
+	//https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0
+	
 	var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
 
 	var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
@@ -215,18 +217,18 @@ require([
 	var waterbodyRenderer = new SimpleRenderer(waterbodySymbol)
 	
 	
-	              var zsymbol1 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 12,
+	              var zsymbol1 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 6,
                     new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
                     new  Color([0, 0, 0, 0.5]), 0.5),
-                    new  Color([95, 5, 59, 1])
+                    new  Color([95, 5, 59, 0.3])
                   );
-				  var zsymbol2 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 12,
+				  var zsymbol2 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 10,
                     new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
                     new  Color([0, 0, 0, 0.5]), 0.5),
-                    new  Color([95, 5, 59, 1])
+                    new  Color([95, 5, 59, 0.7])
                   );
 				  var NSwaterbodyRenderer1 = new SimpleRenderer(zsymbol1)
-				  zsymbol2.setSize(24)
+				  zsymbol2.setSize(16)
 				  var NSwaterbodyRenderer2 = new SimpleRenderer(zsymbol2)
 				  
 				  
