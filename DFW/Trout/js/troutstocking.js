@@ -21,7 +21,6 @@ require([
 		"esri/InfoTemplate",
 		"esri/layers/LabelLayer",
 		"esri/dijit/Scalebar",
-		"esri/dijit/Legend",
 		"esri/dijit/Print",
 		"esri/tasks/PrintTemplate",
 		"esri/config",
@@ -57,7 +56,7 @@ require([
 		"dijit/layout/AccordionContainer",
 		"dojo/domReady!"
 	], function (
-		Map, Extent, Point, FeatureLayer, arcgisUtils, Query, queryTask, SpatialReference, SimpleLineSymbol, SimpleMarkerSymbol, SimpleFillSymbol, PictureFillSymbol, TextSymbol, SimpleRenderer, ScaleDependentRenderer, InfoTemplate, LabelLayer, Scalebar, Legend, Print, PrintTemplate, esriConfig, esriRequest, arrayUtils, Color, parser, baseUnload, cookie, FilteringSelect, Dialog, Memory, json, towns, connect, Menu, MenuItem, ComboButton, Button, Form, TextBox, Tooltip, domStyle, domClass, dom, on, all, query, ready) {
+		Map, Extent, Point, FeatureLayer, arcgisUtils, Query, queryTask, SpatialReference, SimpleLineSymbol, SimpleMarkerSymbol, SimpleFillSymbol, PictureFillSymbol, TextSymbol, SimpleRenderer, ScaleDependentRenderer, InfoTemplate, LabelLayer, Scalebar, Print, PrintTemplate, esriConfig, esriRequest, arrayUtils, Color, parser, baseUnload, cookie, FilteringSelect, Dialog, Memory, json, towns, connect, Menu, MenuItem, ComboButton, Button, Form, TextBox, Tooltip, domStyle, domClass, dom, on, all, query, ready) {
 	var gsURL = "https://maps.massgis.state.ma.us/arcgisserver/rest/services/Utilities/Geometry/GeometryServer"; // url to DEP geometry service
 	//esriConfig.defaults.io.proxyUrl = "/proxy";
 	//esriConfig.defaults.io.corsEnabledServers.push("https://maps.massgis.state.ma.us/arcgisserver/rest/services/");
@@ -90,7 +89,7 @@ require([
 	var townSelect = new FilteringSelect({
 			name : "TownSelect",
 			placeHolder : "Select a City/Town",
-			style : "width:220px;right:8%;top:22px;position:absolute;z-Index:999;",
+			style : "width:200px;left:1.8%;top:3.8em;position:absolute;z-Index:999;",
 			required : false,
 			maxHeight : 312,
 			store : TownStore,
@@ -103,12 +102,17 @@ require([
 
 		}, "TownSelect");
 	townSelect.startup();
+	
 	//Test URL
 	//https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0
 	
 	var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
+	//TEST
+	//var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
 
 	var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
+	//TEST
+	//var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
 		
 	 //build query task
      queryTask = new esri.tasks.QueryTask("https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Trout_Stocking/FeatureServer/1");
@@ -122,7 +126,7 @@ require([
 		wbc = replaceAll(wbc.toString(),",","','")
 		defQueryString = "STK_WB_ID IN ('" + wbc + "')"
 		nondefQueryString = "STK_WB_ID NOT IN ('" + wbc + "')"
-		//console.log(defQueryString)
+		console.log(defQueryString)
 		waterbodyCentroids.setDefinitionExpression(defQueryString)
 		noStockWaterbodyCentroids.setDefinitionExpression(nondefQueryString)
 	}
@@ -145,6 +149,25 @@ require([
                 (1,1,tolerance,tolerance,evt.mapPoint.spatialReference);
         query.geometry = queryExtent.centerAt(centerPoint);
 		//If Waterbodies are visible then highlight the waterbody otherwise highlight the point.
+
+		if (waterbodies.visibleAtMapScale === true){
+				waterbodies.selectFeatures(query)
+				waterbodyCentroids.clearSelection()
+			}
+				else
+			{
+				waterbodyCentroids.selectFeatures(query)
+				waterbodies.clearSelection()
+			}
+			
+	    //NEEDS A TRY CATCH BLOCK
+		if (map.getScale()>200000){
+				waterbodyCentroids.queryFeatures(query, makeGoogleQuery);
+			  }
+			  else
+			  {
+				waterbodies.queryFeatures(query, makeGoogleQuery);
+									}
 		});
 	function makeGoogleQuery(results) {
 		try{
@@ -211,41 +234,64 @@ require([
 	var stockingDialog;
 	
 	//SYMBOLOGY################################################################################--------
-	var waterbodySymbol = new SimpleFillSymbol().setColor(new Color([204, 0, 204, 1]));
+	var waterbodySymbol = new SimpleFillSymbol().setColor(new Color([246, 230, 251, 1]));
 	waterbodySymbol.outline.setStyle(SimpleLineSymbol.STYLE_SOLID,new Color([0,0,0]));
 	waterbodySymbol.outline.setWidth(2);
 	var waterbodyRenderer = new SimpleRenderer(waterbodySymbol)
 	
-	
-	              var zsymbol1 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 6,
+		//UNSTOCKED POINTS - AKA COMING SOON! 
+	              var zsymbol1 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 6,  //STATEWIDE
                     new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-                    new  Color([0, 0, 0, 0.5]), 0.5),
-                    new  Color([95, 5, 59, 0.3])
+                    new  Color([0, 0, 0, 0.5]), 0.5),  //Outine Fill
+                    new  Color([95, 5, 59, 0.7])  //Marker Fill
                   );
-				  var zsymbol2 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 10,
+				  var zsymbol2 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 10, //~WATERSHED
                     new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-                    new  Color([0, 0, 0, 0.5]), 0.5),
-                    new  Color([95, 5, 59, 0.7])
+                    new  Color([0, 0, 0, 1]), 2),  //Outine Fill
+                    new  Color([95, 5, 59, 0.7])  //Marker Fill
                   );
 				  var NSwaterbodyRenderer1 = new SimpleRenderer(zsymbol1)
 				  zsymbol2.setSize(16)
 				  var NSwaterbodyRenderer2 = new SimpleRenderer(zsymbol2)
 				  
-				  
-	
 	    var params = {rendererInfos: [{
           "renderer": NSwaterbodyRenderer1,
           "minScale": 50000000,
-          "maxScale": 500000
+          "maxScale": 200000
         }, {
           "renderer": NSwaterbodyRenderer2,
-          "minScale": 500000,
+          "minScale": 200000,
           "maxScale": 1
         }]};
 
-	
 		var scaleDependentRenderer = new ScaleDependentRenderer(params);
-        
+		
+		//STOCKED POINTS
+        	var usymbol1 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 8,  //STATEWIDE
+                    new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                    new  Color([0, 0, 0, 0.5]), 0.5),  //Outine Fill
+                    new  Color([7, 229, 233, 1])  //Marker Fill
+                  );
+				  var usymbol2 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 10, //~WATERSHED
+                    new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                    new  Color([0, 0, 0, 1]), 2),  //Outine Fill
+                    new  Color([7, 229, 233, 1])  //Marker Fill
+                  );
+				  var stockedWaterbodyRenderer1 = new SimpleRenderer(usymbol1)
+				  usymbol2.setSize(16)
+				  var stockedWaterbodyRenderer2 = new SimpleRenderer(usymbol2)
+				  
+	    var params = {rendererInfos: [{
+          "renderer": stockedWaterbodyRenderer1,
+          "minScale": 50000000,
+          "maxScale": 200000
+        }, {
+          "renderer": stockedWaterbodyRenderer2,
+          "minScale": 200000,
+          "maxScale": 1
+        }]};
+
+		var scaleDependentRenderer2 = new ScaleDependentRenderer(params);
 		
 //LAYERS################################################################################--------
 
@@ -255,7 +301,7 @@ require([
 			id : "Waterbodies",
 			opacity : 0.5,
 			outFields : ["STK_WB_ID"],
-			minScale:500000
+			minScale:200000
 		});
     waterbodies.setRenderer(waterbodyRenderer);
 	
@@ -267,7 +313,7 @@ require([
 			//maxScale : 120001,
 			visible:false
 		});
-		
+		//waterbodyCentroids.setRenderer(scaleDependentRenderer2);
 		var noStockWaterbodyCentroids = new FeatureLayer(nonStockedWaterCentroidURL, {
 			infoTemplate : new InfoTemplate("<b>${mdfw_name}</b>", "Coming Soon"),
 			mode : 1, // 1 =.MODE_ONDEMAND,
@@ -283,23 +329,10 @@ require([
 			"solid",
 			new SimpleLineSymbol("solid", new Color([0, 0, 0]), 1),
 			new Color([0, 255, 255, 0.6]));
-
 	waterbodies.setSelectionSymbol(WBSymbol);
-	
-			if (waterbodies.visibleAtMapScale === true){
-				waterbodies.selectFeatures(query)
-				waterbodyCentroids.clearSelection()
-			}
-				else
-			{
-				waterbodyCentroids.selectFeatures(query)
-				waterbodies.clearSelection()
-			}
-		
-			waterbodyCentroids.queryFeatures(query, makeGoogleQuery);
 
-			waterbodyCentroids.attr("name","TEST")
-			
+			waterbodyCentroids.queryFeatures(query, makeGoogleQuery);
+		
 	function placeQueryAndZoom(queryString, URL, queryOutFields) { //queryOutFields optional
 		//dojo.query("#progress").style("display", "block")
 		var queryTask = new esri.tasks.QueryTask(URL);
@@ -316,19 +349,6 @@ require([
 		}, function(){alert("The location you selected can't be found.\nYou could zoom and pan to it or select another site.");dojo.query("#progress").style("display", "none");});
 	}
 			
-      //add the legend
-      map.on("layers-add-result", function (evt) {
-        var layerInfo = arrayUtils.map(evt.layers, function (layer, index) {
-          return {layer:layer.layer, title:layer.layer.id};
-        });
-        if (layerInfo.length > 0) {
-          var legendDijit = new Legend({
-            map: map,
-            layerInfos: layerInfo,
-          }, "legendDiv");
-          legendDijit.startup();
-        }
-      });
 
 //////////////////////////////ADD LAYERS//////////////////////////////////
 	map.addLayers([waterbodies,noStockWaterbodyCentroids,waterbodyCentroids]);//, townsurvey
