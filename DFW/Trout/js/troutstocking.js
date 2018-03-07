@@ -104,13 +104,13 @@ require([
 	//Test URL
 	//https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0
 	
-	//var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
+	var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
 	//TEST
-	var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
+	//var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
 
-	//var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
+	var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
 	//TEST
-	var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
+	//var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
 		
 	//build query task
     queryTask = new esri.tasks.QueryTask("https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Trout_Stocking/FeatureServer/1");
