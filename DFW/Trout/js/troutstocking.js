@@ -81,10 +81,7 @@ require([
 		
 		//###############################################################################################TOWNS COMBOBOX
 	// create store instance referencing data from towns.json
-	var TownStore = new Memory({
-			idProperty : "name",
-			data : json.parse(towns)
-		});
+	var TownStore = new Memory({idProperty : "name",data : json.parse(towns)});
 	// create FilteringSelect widget, populating its options from the store
 	var townSelect = new FilteringSelect({
 			name : "TownSelect",
@@ -102,20 +99,21 @@ require([
 
 		}, "TownSelect");
 	townSelect.startup();
-	
+	   //###############################################################################################################
+	   
 	//Test URL
 	//https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0
 	
-	var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
+	//var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
 	//TEST
-	//var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
+	var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
 
-	var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
+	//var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
 	//TEST
-	//var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
+	var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
 		
-	 //build query task
-     queryTask = new esri.tasks.QueryTask("https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Trout_Stocking/FeatureServer/1");
+	//build query task
+    queryTask = new esri.tasks.QueryTask("https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Trout_Stocking/FeatureServer/1");
 
 	
 	stockedQuery.setQuery('SELECT D');
@@ -164,10 +162,10 @@ require([
 		if (map.getScale()>200000){
 				waterbodyCentroids.queryFeatures(query, makeGoogleQuery);
 			  }
-			  else
-			  {
-				waterbodies.queryFeatures(query, makeGoogleQuery);
-									}
+			 //else
+			  //{
+				//waterbodies.queryFeatures(query, makeGoogleQuery);
+									//}
 		});
 	function makeGoogleQuery(results) {
 		try{
@@ -242,12 +240,12 @@ require([
 		//UNSTOCKED POINTS - AKA COMING SOON! 
 	              var zsymbol1 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 6,  //STATEWIDE
                     new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-                    new  Color([0, 0, 0, 0.5]), 0.5),  //Outine Fill
+                    new  Color([0, 0, 0, 0.0]), 0.5),  //Outine Fill
                     new  Color([95, 5, 59, 0.7])  //Marker Fill
                   );
 				  var zsymbol2 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 10, //~WATERSHED
                     new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-                    new  Color([0, 0, 0, 1]), 2),  //Outine Fill
+                    new  Color([0, 0, 0, 0]), 2),  //Outine Fill
                     new  Color([95, 5, 59, 0.7])  //Marker Fill
                   );
 				  var NSwaterbodyRenderer1 = new SimpleRenderer(zsymbol1)
