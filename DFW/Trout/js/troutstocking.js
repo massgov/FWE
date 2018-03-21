@@ -139,8 +139,8 @@ require([
         //Divide width in map units by width in pixels
         var pixelWidth = mapWidth/map.width;
 
-        //Calculate a 10 pixel envelope width (5 pixel tolerance on each side)
-        var tolerance = 10 * pixelWidth;
+        //Calculate a 20 pixel envelope width (10 pixel tolerance on each side).  Changed from 10 to facilitate mobile
+        var tolerance = 20 * pixelWidth;
 
         //Build tolerance envelope and set it as the query geometry
         var queryExtent = new esri.geometry.Extent
@@ -159,9 +159,9 @@ require([
 			}
 			
 	    //NEEDS A TRY CATCH BLOCK
-		if (map.getScale()>200000){
+		//if (map.getScale()>200000){
 				waterbodyCentroids.queryFeatures(query, makeGoogleQuery);
-			  }
+			 // }
 			 //else
 			  //{
 				//waterbodies.queryFeatures(query, makeGoogleQuery);
