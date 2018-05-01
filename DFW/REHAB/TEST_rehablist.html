@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+	.filter {
+		float: left;
+		textsize: 80%;
+		margin: 20px 5px;
+	}	
+	body {
+		background-color: white;
+	}
+</style>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+	
+     google.charts.load('current', {'packages':['controls', 'table']});
+     google.charts.setOnLoadCallback(drawTable);
+	  
+	function drawTable() {
+		/*for fusion table if we decide to switch from google sheet*/
+		/*var queryString = encodeURIComponent("SELECT 'COMPANY NAME','PHONE','ADDRESS' FROM 1YDJoiYulOciALdx4OhiCNp0lquTSO42MLuhAx8B8");
+		var pacQuery = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq=' + queryString);*/
+		
+		var queryString = encodeURIComponent('SELECT A, B, C, D, E, F');
+		/*var rehabQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1zmwcHZEg4xJQOZVz_qi8CUNg6NnLYLmHIdIVxfpWaI8/gviz/tq?gid=0&headers=1&tq=' + queryString);*/
+		var rehabQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1pM4fYXAfN3tmeOBJbRYDIpq2BGIKZVRECKhmuLYBYPU/gviz/tq?gid=0&headers=1&tq=' + queryString);
+		rehabQuery.send(handleQueryResponse);
+	} 
+ 
+    function handleQueryResponse(response) {
+        if (response.isError()) {
+            alert('Error in query: ' + response.getMessage());response.getDetailedMessage();
+            return;
+        }
+		var data = response.getDataTable();
+		
+		var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+		
+		var myTable = new google.visualization.ChartWrapper({
+			chartType: 'Table',
+			containerId: 'rehab_table',
+			dataTable: data,
+			options: {
+				width: '100%',
+				page: 'enable',
+				pageSize: 25,
+			}
+		
+		});
+		
+		var filterTown = new google.visualization.ControlWrapper({
+			controlType: 'StringFilter',
+			containerId: 'filterTown_div',
+			options: {
+             filterColumnIndex: 0
+        }
+		});
+		
+		var filterDistrict = new google.visualization.ControlWrapper({
+			controlType: 'StringFilter',
+			containerId: 'filterDistrict_div',
+			options: {
+				filterColumnIndex: 5
+			}
+		});
+		dashboard.bind([filterTown], [filterDistrict])
+		dashboard.bind([filterDistrict], [myTable]);
+		dashboard.draw(data);
+		}
+		 
+	</script>
+	
+	
+</head>
+<body>
+	<div id="dashboard_div">
+		<div id="filterTown_div" class="filter"></div>
+		<div id="filterDistrict_div" class="filter"></div>
+		<div id="rehab_table"></div>
+	</div>
+	
+</body>
+</html>
