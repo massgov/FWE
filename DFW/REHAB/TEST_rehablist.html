@@ -5,7 +5,7 @@
 	.filter {
 		float: left;
 		textsize: 80%;
-		margin: 20px 5px;
+		margin: 20px 10px;
 	}	
 	body {
 		background-color: white;
@@ -44,13 +44,13 @@
 			options: {
 				width: '100%',
 				page: 'enable',
-				pageSize: 15,
+				pageSize: 25,
 			}
 		
 		});
 		
 		var filterTown = new google.visualization.ControlWrapper({
-			controlType: 'CategoryFilter',
+			controlType: 'StringFilter',
 			containerId: 'filterTown_div',
 			options: {
              filterColumnIndex: 0
@@ -64,8 +64,12 @@
 				filterColumnIndex: 5
 			}
 		});
-		dashboard.bind([filterTown], [filterDistrict])
-		dashboard.bind([filterDistrict], [myTable]);
+		
+		/*for multiple selectsions - ,
+				ui: {
+				allowMultiple: false}*/
+		dashboard.bind([filterDistrict], [filterTown])
+		dashboard.bind([filterTown], [myTable]);
 		dashboard.draw(data);
 		}
 		 
@@ -75,8 +79,8 @@
 </head>
 <body>
 	<div id="dashboard_div">
-		<div id="filterTown_div" class="filter"></div>
 		<div id="filterDistrict_div" class="filter"></div>
+		<div id="filterTown_div" class="filter"></div>
 		<div id="rehab_table"></div>
 	</div>
 	
