@@ -22,7 +22,7 @@
 		/*var queryString = encodeURIComponent("SELECT 'COMPANY NAME','PHONE','ADDRESS' FROM 1YDJoiYulOciALdx4OhiCNp0lquTSO42MLuhAx8B8");
 		var pacQuery = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq=' + queryString);*/
 		
-		var queryString = encodeURIComponent('SELECT A, B, C, D, E, F');
+		var queryString = encodeURIComponent('SELECT A, B, C, D, E, F, G');
 		/*var rehabQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1zmwcHZEg4xJQOZVz_qi8CUNg6NnLYLmHIdIVxfpWaI8/gviz/tq?gid=0&headers=1&tq=' + queryString);*/
 		var rehabQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1pM4fYXAfN3tmeOBJbRYDIpq2BGIKZVRECKhmuLYBYPU/gviz/tq?gid=0&headers=1&tq=' + queryString);
 		rehabQuery.send(handleQueryResponse);
@@ -44,7 +44,8 @@
 			options: {
 				width: '100%',
 				page: 'enable',
-				pageSize: 25,
+				pageSize: 15,
+				allowhtml: true
 			}
 		
 		});
