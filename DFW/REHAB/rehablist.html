@@ -22,7 +22,7 @@
 		/*var queryString = encodeURIComponent("SELECT 'COMPANY NAME','PHONE','ADDRESS' FROM 1YDJoiYulOciALdx4OhiCNp0lquTSO42MLuhAx8B8");
 		var pacQuery = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq=' + queryString);*/
 		
-		var queryString = encodeURIComponent('SELECT A, B, C, D, E');
+		var queryString = encodeURIComponent('SELECT A, B, C, D, E, F');
 		var rehabQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1zmwcHZEg4xJQOZVz_qi8CUNg6NnLYLmHIdIVxfpWaI8/gviz/tq?gid=0&headers=1&tq=' + queryString);
 		
 		rehabQuery.send(handleQueryResponse);
@@ -46,19 +46,27 @@
 			options: {
 				width: '100%',
 				page: 'enable',
-				pageSize: 25,
+				pageSize: 15,
 			}
 		
 		});
 		
+	    	var filterDistrict = new google.visualization.ControlWrapper({
+			controlType: 'CategoryFilter',
+			containerId: 'filterDistrict_div',
+			options: {
+				filterColumnIndex: 5
+			}
+		});
 		var filterTown = new google.visualization.ControlWrapper({
 			controlType: 'StringFilter',
 			containerId: 'filterTown_div',
 			options: {
-             filterColumnIndex: 0
-        }
+             			filterColumnIndex: 0
+       			 }
 		});
 		
+		dashboard.bind([filterDistrict], [filterTown])
 		dashboard.bind([filterTown], [myTable]);
 		dashboard.draw(data);
 		}
@@ -69,7 +77,7 @@
 </head>
 <body>
 	<div id="dashboard_div">
-		<div id="filter_div" class="filter"></div>
+		<div id="filterDistrict_div" class="filter"></div>
 		<div id="filterTown_div" class="filter"></div>
 		<div id="rehab_table"></div>
 	</div>
