@@ -349,7 +349,8 @@ require([
 			
 
 //////////////////////////////ADD LAYERS//////////////////////////////////
-	map.addLayers([waterbodies,noStockWaterbodyCentroids,waterbodyCentroids]);//, townsurvey
+	//map.addLayers([waterbodies,noStockWaterbodyCentroids,waterbodyCentroids]);//, townsurvey
+	map.addLayers([waterbodies,waterbodyCentroids]);//, townsurvey
 /////////////////////////////////////////////////////////////////////////
 
 
