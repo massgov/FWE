@@ -113,22 +113,41 @@ require([
 	//TEST
 	//var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
 		
+	//FALL Unstocked waterbodies/centroid sheet
+	var unStockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/edit#gid=1651923844');
+	
 	//build query task
     queryTask = new esri.tasks.QueryTask("https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/TroutStockingLayer/FeatureServer/23");
+	
+	
 
 	
 	stockedQuery.setQuery('SELECT D');
+	unStockedQuery.setQuery('SELECT D');
+	
+	function createUnstockedDefQuery(response){
+		console.log(response)
+		wbc2 = response.getDataTable().getDistinctValues(0);
+		wbc2 = wbc2.slice(0,wbc2.length)
+		wbc2 = replaceAll(wbc2.toString(),",","','")
+		//wbc2 = "96244-261"
+		defUnstockedQueryString = "STK_WB_ID IN ('" + wbc2 + "')"
+		console.log(defUnstockedQueryString)
+		noStockWaterbodyCentroids.setDefinitionExpression(defUnstockedQueryString)
+	}
 
 	function createDefQuery(response){
 		wbc = response.getDataTable().getDistinctValues(0);
 		wbc = wbc.slice(0,wbc.length)
 		wbc = replaceAll(wbc.toString(),",","','")
 		defQueryString = "STK_WB_ID IN ('" + wbc + "')"
-		nondefQueryString = "STK_WB_ID NOT IN ('" + wbc + "')"
+		//nondefQueryString = "STK_WB_ID NOT IN ('" + wbc + "')"
 		console.log(defQueryString)
 		waterbodyCentroids.setDefinitionExpression(defQueryString)
-		noStockWaterbodyCentroids.setDefinitionExpression(nondefQueryString)
+		//noStockWaterbodyCentroids.setDefinitionExpression(nondefQueryString)
 	}
+	
+	
 	
 		map.on("click", function(evt) {
           //alert("User clicked on " + evt.mapPoint.x +", " + evt.mapPoint.y);
@@ -357,8 +376,12 @@ require([
 	map.on("layer-add-result", function(layerAdded, errorMsg){
 		if(layerAdded.layer === waterbodyCentroids){  
          stockedQuery.send(createDefQuery)
-		 noStockWaterbodyCentroids.setVisibility(true)
 		 waterbodyCentroids.setVisibility(true)
+		 };
+		 
+		if(layerAdded.layer === noStockWaterbodyCentroids){  
+         unStockedQuery.send(createUnstockedDefQuery)
+		 noStockWaterbodyCentroids.setVisibility(true)
 		 };
 		 
 	});
