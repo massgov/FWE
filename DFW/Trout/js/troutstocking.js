@@ -62,8 +62,9 @@ require([
 	//esriConfig.defaults.io.corsEnabledServers.push("https://maps.massgis.state.ma.us/arcgisserver/rest/services/");
 	var townsURL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MA_towns_multipart/FeatureServer/0"; //towns layer location
 	var waterbodiesURL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/TroutStockingLayer/FeatureServer/23"; //Waterbodies layer
-	var waterCentroidURL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/TroutStockingLayer/FeatureServer/24"; //Waterbodies Centroid layer
-	var nonStockedWaterCentroidURL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Trout_Stocking_Waterbodies_ALL/FeatureServer/24"; //Unstocked Waterbodies Centroid layer
+	var waterCentroidURL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/TroutStockingLayer/FeatureServer/24"; //Waterbodies layer
+	var nonStockedWaterCentroidURL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Trout_Stocking_Waterbodies_ALL/FeatureServer/24"; 
+	//Waterbodies layer
 	parser.parse(); //scan DOM, instantiate nodes with dojo attributes
 	
 	var text = "";
@@ -139,7 +140,7 @@ require([
         //Divide width in map units by width in pixels
         var pixelWidth = mapWidth/map.width;
 
-        //Calculate a 20 pixel envelope width (10 pixel tolerance on each side).  Changed from 10 to facilitate mobile
+        //Calculate a 10 pixel envelope width (5 pixel tolerance on each side)
         var tolerance = 20 * pixelWidth;
 
         //Build tolerance envelope and set it as the query geometry
@@ -161,7 +162,7 @@ require([
 	    //NEEDS A TRY CATCH BLOCK
 		//if (map.getScale()>200000){
 				waterbodyCentroids.queryFeatures(query, makeGoogleQuery);
-			 // }
+			  //}
 			 //else
 			  //{
 				//waterbodies.queryFeatures(query, makeGoogleQuery);
@@ -349,8 +350,7 @@ require([
 			
 
 //////////////////////////////ADD LAYERS//////////////////////////////////
-	//map.addLayers([waterbodies,noStockWaterbodyCentroids,waterbodyCentroids]);//, townsurvey
-	map.addLayers([waterbodies,waterbodyCentroids]);//, townsurvey
+	map.addLayers([waterbodies,noStockWaterbodyCentroids,waterbodyCentroids]);//, townsurvey
 /////////////////////////////////////////////////////////////////////////
 
 
