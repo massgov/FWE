@@ -21,13 +21,14 @@ require([
 		"esri/InfoTemplate",
 		"esri/layers/LabelLayer",
 		"esri/dijit/Scalebar",
+		"esri/dijit/Print",
+		"esri/tasks/PrintTemplate",
 		"esri/config",
 		"esri/request",
 		"dojo/_base/array",
 		"dojo/_base/Color",
 		"dojo/parser",
 		"dojo/_base/unload",
-		"dojo/cookie",
 		"dijit/form/FilteringSelect",
 		"dijit/Dialog",
 		"dojo/store/Memory",
@@ -41,9 +42,13 @@ require([
 		"dojo/promise/all",
 		"dojo/query",
 		"dojo/ready",
+		"dijit/layout/BorderContainer",
+		"dijit/layout/ContentPane",
+		"dijit/TitlePane",
+		"dijit/layout/AccordionContainer",
 		"dojo/domReady!"
 	], function (
-		Map, Extent, Point, FeatureLayer, arcgisUtils, Query, queryTask, SpatialReference, SimpleLineSymbol, SimpleMarkerSymbol, SimpleFillSymbol, PictureFillSymbol, TextSymbol, SimpleRenderer, ScaleDependentRenderer, InfoTemplate, LabelLayer, Scalebar, esriConfig, esriRequest, arrayUtils, Color, parser, baseUnload, cookie, FilteringSelect, Dialog, Memory, json, towns, connect, domStyle, domClass, dom, on, all, query, ready) {
+		Map, Extent, Point, FeatureLayer, arcgisUtils, Query, queryTask, SpatialReference, SimpleLineSymbol, SimpleMarkerSymbol, SimpleFillSymbol, PictureFillSymbol, TextSymbol, SimpleRenderer, ScaleDependentRenderer, InfoTemplate, LabelLayer, Scalebar, Print, PrintTemplate, esriConfig, esriRequest, arrayUtils, Color, parser, baseUnload, FilteringSelect, Dialog, Memory, json, towns, connect, domStyle, domClass, dom, on, all, query, ready) {
 	var gsURL = "https://maps.massgis.state.ma.us/arcgisserver/rest/services/Utilities/Geometry/GeometryServer"; // url to DEP geometry service
 	//esriConfig.defaults.io.proxyUrl = "/proxy";
 	//esriConfig.defaults.io.corsEnabledServers.push("https://maps.massgis.state.ma.us/arcgisserver/rest/services/");
@@ -91,60 +96,61 @@ require([
 	   
 	//Test URL
 	//https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0
-	
+	//Query For Popup Information
 	var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
-	//TEST
-	//var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
 
 	var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
-	//TEST
-	//var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0');
 		
-	//FALL Unstocked waterbodies/centroid sheet
+	//fall? Unstocked waterbodies/centroid sheet
 	var unStockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/edit#gid=1651923844');
 	
-	var waterbodies = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/edit#gid=0');
+	var showWaterbodiesQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/edit#gid=0');
 	
 	//build query task
     queryTask = new esri.tasks.QueryTask("https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/TroutStockingLayer/FeatureServer/23");
 	
 	
 
-	//select ID from Google Spreadsheet
+	//Google Queries
 	stockedQuery.setQuery('SELECT D');
 	unStockedQuery.setQuery('SELECT D');
-	waterbodies.setQuery('SELECT D');
-	
+	showWaterbodiesQuery.setQuery('SELECT D');
 
-	//main query for trout stocking
+	//create the three definition queries
+	function createUnstockedDefQuery(response){
+		console.log(response)
+		wbc2 = response.getDataTable().getDistinctValues(0);
+		wbc2 = wbc2.slice(0,wbc2.length)
+		wbc2 = replaceAll(wbc2.toString(),",","','")
+		//wbc2 = "96244-261"
+		defUnstockedQueryString = "STK_WB_ID IN ('" + wbc2 + "')"
+		console.log(defUnstockedQueryString)
+		noStockWaterbodyCentroids.setDefinitionExpression(defUnstockedQueryString)
+	}
+
 	function createDefQuery(response){
 		wbc = response.getDataTable().getDistinctValues(0);
-		wbc = wbc.slice(0,wbc.length);
-		wbc = replaceAll(wbc.toString(),",","','");
-		defQueryString = "STK_WB_ID IN ('" + wbc + "')";
-		console.log(defQueryString);
-		waterbodyCentroids.setDefinitionExpression(defQueryString);
+		wbc = wbc.slice(0,wbc.length)
+		wbc = replaceAll(wbc.toString(),",","','")
+		defQueryString = "STK_WB_ID IN ('" + wbc + "')"
+		//nondefQueryString = "STK_WB_ID NOT IN ('" + wbc + "')"
+		console.log(defQueryString)
+		waterbodyCentroids.setDefinitionExpression(defQueryString)
+		//noStockWaterbodyCentroids.setDefinitionExpression(nondefQueryString)
 	}
-	//unstocked centroids (the purple diamonds)
-	function createUnstockedDefQuery(response){
-		wbc2 = response.getDataTable().getDistinctValues(0);
-		wbc2 = wbc2.slice(0,wbc2.length);
-		wbc2 = replaceAll(wbc2.toString(),",","','");
-		defUnstockedQueryString = "STK_WB_ID IN ('" + wbc2 + "')";
-		noStockWaterbodyCentroids.setDefinitionExpression(defUnstockedQueryString);
-	}
-	//waterbodies will match stocked and to be stocked.
-	function createWaterbodyDefQuery(response){
+		//waterbodies will match stocked and to be stocked.
+	function createWaterbodiesDefQuery(response){
 		wbc3 = response.getDataTable().getDistinctValues(0);
 		wbc3 = wbc3.slice(0,wbc3.length);
 		wbc3 = replaceAll(wbc3.toString(),",","','");
 		defWaterbodyQueryString = "STK_WB_ID IN ('" + wbc3 + "')";
-		waterbody.setDefinitionExpression(defWaterbodyQueryString);
-	}
+		console.log(defWaterbodyQueryString)
+		waterbodies.setDefinitionExpression(defWaterbodyQueryString);
+}
 	
 		map.on("click", function(evt) {
           //alert("User clicked on " + evt.mapPoint.x +", " + evt.mapPoint.y);
-		var query = new Query();
+		 var query = new Query();
 		        var centerPoint = new esri.geometry.Point
                 (evt.mapPoint.x,evt.mapPoint.y,evt.mapPoint.spatialReference);
         var mapWidth = map.extent.getWidth();
@@ -156,22 +162,22 @@ require([
         var tolerance = 20 * pixelWidth;
 
         //Build tolerance envelope and set it as the query geometry
-        var queryExtent = new esri.geometry.Extent;
+        var queryExtent = new esri.geometry.Extent
                 (1,1,tolerance,tolerance,evt.mapPoint.spatialReference);
         query.geometry = queryExtent.centerAt(centerPoint);
 		//If Waterbodies are visible then highlight the waterbody otherwise highlight the point.
 
 		if (waterbodies.visibleAtMapScale === true){
-				waterbodies.selectFeatures(query);
-				waterbodyCentroids.clearSelection();
+				waterbodies.selectFeatures(query)
+				waterbodyCentroids.clearSelection()
 			}
 				else
 			{
-				waterbodyCentroids.selectFeatures(query);
-				waterbodies.clearSelection();
+				waterbodyCentroids.selectFeatures(query)
+				waterbodies.clearSelection()
 			}
 			
-
+	    //NEEDS A TRY CATCH BLOCK
 		//if (map.getScale()>200000){
 				waterbodyCentroids.queryFeatures(query, makeGoogleQuery);
 			  //}
@@ -180,7 +186,6 @@ require([
 				//waterbodies.queryFeatures(query, makeGoogleQuery);
 									//}
 		});
-		//this is the query for results from the table.
 	function makeGoogleQuery(results) {
 		try{
 		myResult = results.features[0].attributes.STK_WB_ID
@@ -197,7 +202,6 @@ require([
 		  fishquery.send(handleQueryResponse)
     }
  
- //create and show the dialog box with trout stocking information
     function handleQueryResponse(response) {
 
         if (response.isError()) {
@@ -344,9 +348,8 @@ require([
 			new Color([0, 255, 255, 0.6]));
 	waterbodies.setSelectionSymbol(WBSymbol);
 
-	waterbodyCentroids.queryFeatures(query, makeGoogleQuery);
-			
-//zoom combobox for city and town
+			waterbodyCentroids.queryFeatures(query, makeGoogleQuery);
+		
 	function placeQueryAndZoom(queryString, URL, queryOutFields) { //queryOutFields optional
 		//dojo.query("#progress").style("display", "block")
 		var queryTask = new esri.tasks.QueryTask(URL);
@@ -368,9 +371,9 @@ require([
 	map.addLayers([waterbodies,noStockWaterbodyCentroids,waterbodyCentroids]);//, townsurvey
 /////////////////////////////////////////////////////////////////////////
 
-//each layer has it's definition query run as it is added.
+
 	map.on("layer-add-result", function(layerAdded, errorMsg){
-		if(layerAdded.layer === waterbodyCentroids){
+		if(layerAdded.layer === waterbodyCentroids){  
          stockedQuery.send(createDefQuery)
 		 waterbodyCentroids.setVisibility(true)
 		 };
@@ -379,9 +382,10 @@ require([
 		 noStockWaterbodyCentroids.setVisibility(true)
 		 };
 		if(layerAdded.layer === waterbodies){  
-         waterbodies.send(createWaterbodyDefQuery)
+         showWaterbodiesQuery.send(createWaterbodiesDefQuery)
 		 waterbodies.setVisibility(true)
 		 };
+		
 	});
 	
 	var scalebar = new esri.dijit.Scalebar({
