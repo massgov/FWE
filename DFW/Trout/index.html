@@ -5,44 +5,28 @@
 	<meta name="robots" content="noindex">
     <!--The viewport meta tag is used to improve the presentation and behavior of the samples 
       on iOS devices-->
-	<link rel="stylesheet" href="https://js.arcgis.com/3.15/dijit/themes/claro/claro.css"> 
-	<link rel="stylesheet" href="https://js.arcgis.com/3.15/esri/css/esri.css">
+	<link rel="stylesheet" href="https://js.arcgis.com/3.25/dijit/themes/claro/claro.css"> 
+	<link rel="stylesheet" href="https://js.arcgis.com/3.25/esri/css/esri.css">
 	<link rel="stylesheet" href="css/wildlands.css">
 	<link rel="icon" type="image/png" href="images/favicon.png" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
     <title>Trout Stocking Viewer</title>
-<script src="https://js.arcgis.com/3.15/"></script>
+<script src="https://js.arcgis.com/3.25/"></script>
 <script type="text/javascript" src="//www.google.com/jsapi"></script>
 <script type="text/javascript">
     google.load('visualization', '1', {packages: ['table']});
 </script>
 <script src="js/troutstocking.js"></script>
-
-  <style> 
-          .esriLegendServiceLabel{  
-            font-family: 'Times New Roman';
-			font-size: 10pt;
-            color:black;  
-          }  
-
-  </style>
-
 	</head>
   <body class="claro" style="background-color:white;">
 <div data-dojo-type="dijit/layout/BorderContainer"
          data-dojo-props="design:'headline', gutters:false" 
          style="width:100%;height:100%;margin:0;padding:0;">
    </span>
-  </div-->
-      <div id="mapDiv" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center', open:'false'" style="padding:0;border:1px solid black;"> <div id="table"></div>
+      <div id="mapDiv" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center', open:'false'" style="padding:0;border:1px solid black;"> 
+	  <div id="table"></div>
 	  <div id="TownSelect"></div>
-	  <a id="dfw_logo" title="Massachusetts Department of Fish and Wildlife Logo" href="http://mass.gov/dfw">
-	  <!--img id="dfwLogoImage" style="position:absolute;left:16px;bottom:50px;z-Index:9999;" alt="Massachusetts Department of Fish and Wildlife" src="images/DFW_Logo.png" width="120" height="123"-->
-	  </a>
-		<div id="progress" style="display:none;position:absolute;left:43.25%;bottom:50%;z-Index:9999;"><img alt="loading" src="images/loading.gif"></div>
-      </div><!--img id="legend" style="visibility:hidden;position:absolute; right:3px; top:200px; z-Index:999;" alt="Legend" src="images/legend.png"-->
-	  <div id="legendDiv" style="width:12em;z-Index:9999;top:54%;float:right;border: 3px solid black;background-color:white;"></div>
-
+      </div>
 </div>
   </body>
 </html>
