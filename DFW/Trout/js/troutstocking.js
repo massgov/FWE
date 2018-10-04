@@ -50,8 +50,8 @@ require([
 	], function (
 		Map, Extent, Point, FeatureLayer, arcgisUtils, Query, queryTask, SpatialReference, SimpleLineSymbol, SimpleMarkerSymbol, SimpleFillSymbol, PictureFillSymbol, TextSymbol, SimpleRenderer, ScaleDependentRenderer, InfoTemplate, LabelLayer, Scalebar, Print, PrintTemplate, esriConfig, esriRequest, arrayUtils, Color, parser, baseUnload, FilteringSelect, Dialog, Memory, json, towns, connect, domStyle, domClass, dom, on, all, query, ready) {
 	var gsURL = "https://maps.massgis.state.ma.us/arcgisserver/rest/services/Utilities/Geometry/GeometryServer"; // url to DEP geometry service
-	//esriConfig.defaults.io.proxyUrl = "/proxy";
-	//esriConfig.defaults.io.corsEnabledServers.push("https://maps.massgis.state.ma.us/arcgisserver/rest/services/");
+	esriConfig.defaults.io.proxyUrl = "/proxy";
+	esriConfig.defaults.io.corsEnabledServers.push("https://maps.massgis.state.ma.us/arcgisserver/rest/services/");
 	var townsURL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MA_towns_multipart/FeatureServer/0"; //towns layer location
 	var waterbodiesURL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/TroutStockingLayer/FeatureServer/23"; //Waterbodies layer
 	var waterCentroidURL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/TroutStockingLayer/FeatureServer/24"; //Waterbodies layer
@@ -94,6 +94,7 @@ require([
 	townSelect.startup();
 	   //###############################################################################################################
 	   
+	 //MUST USE FIRST SHEET IN GOOGLE SHEETS - CHECK IF THIS IS TRUE
 	//Test URL
 	//https://docs.google.com/spreadsheets/d/1cM8_wnzcX55N0w1dbAUEfdTEm25dNHVVxLD-fyx-Lsg/edit#gid=0
 	//Query For Popup Information
@@ -102,7 +103,7 @@ require([
 	var stockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1NNPcPjjFD8a6bIBDKlq8BpEiuQS1pnOUtmpDcrXi9To/edit#gid=0');
 		
 	//fall? Unstocked waterbodies/centroid sheet
-	var unStockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/edit#gid=1651923844');
+	var unStockedQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1MYcQMDXbapFvdbIfiHkEf1vaqEvht9ekFbAc6CfgGTE/edit#gid=0');
 	
 	var showWaterbodiesQuery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/edit#gid=0');
 	
@@ -117,6 +118,7 @@ require([
 	showWaterbodiesQuery.setQuery('SELECT D');
 
 	//create the three definition queries
+	//UNSTOCKED
 	function createUnstockedDefQuery(response){
 		console.log(response)
 		wbc2 = response.getDataTable().getDistinctValues(0);
@@ -124,27 +126,28 @@ require([
 		wbc2 = replaceAll(wbc2.toString(),",","','")
 		//wbc2 = "96244-261"
 		defUnstockedQueryString = "STK_WB_ID IN ('" + wbc2 + "')"
-		console.log(defUnstockedQueryString)
+		//console.log(defUnstockedQueryString)
 		noStockWaterbodyCentroids.setDefinitionExpression(defUnstockedQueryString)
 	}
-
+	//STOCKED
 	function createDefQuery(response){
 		wbc = response.getDataTable().getDistinctValues(0);
 		wbc = wbc.slice(0,wbc.length)
 		wbc = replaceAll(wbc.toString(),",","','")
 		defQueryString = "STK_WB_ID IN ('" + wbc + "')"
 		//nondefQueryString = "STK_WB_ID NOT IN ('" + wbc + "')"
-		console.log(defQueryString)
+		//console.log(defQueryString)
 		waterbodyCentroids.setDefinitionExpression(defQueryString)
 		//noStockWaterbodyCentroids.setDefinitionExpression(nondefQueryString)
 	}
-		//waterbodies will match stocked and to be stocked.
+	
+		//WATERBODIES will match stocked and to be stocked.
 	function createWaterbodiesDefQuery(response){
 		wbc3 = response.getDataTable().getDistinctValues(0);
 		wbc3 = wbc3.slice(0,wbc3.length);
 		wbc3 = replaceAll(wbc3.toString(),",","','");
 		defWaterbodyQueryString = "STK_WB_ID IN ('" + wbc3 + "')";
-		console.log(defWaterbodyQueryString)
+		//console.log(defWaterbodyQueryString)
 		waterbodies.setDefinitionExpression(defWaterbodyQueryString);
 }
 	
