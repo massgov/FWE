@@ -6,7 +6,7 @@
       name="viewport"
       content="initial-scale=1, maximum-scale=1,user-scalable=no"
     />
-    <title>Query Related Features - 4.13</title>
+    <title>Rare Species by Town Viewer | Mass.gov</title>
 
     <style>
       html,
@@ -259,7 +259,7 @@ const MESAtowns = new FeatureLayer({
 
               // Query the for the related features for the features ids found
               return MESAtowns.queryRelatedFeatures({
-                outFields: [/*"Town", */"CommonName", /*"ScientificName",*/ "Most_Recent_Observation"],
+                outFields: [/*"Town", */"CommonName", "ScientificName","MESA_Status", "Most_Recent_Observation", ],
                 relationshipId: MESAtowns.relationships[0].id,
                 objectIds: objectIds
               });
@@ -301,7 +301,9 @@ const MESAtowns = new FeatureLayer({
                     columns: Object.keys(rows[0]).map(function(fieldName) {
 					//little minor hack, can't get the alias from the object - take a look at feature?
 					if (fieldName == "CommonName"){fieldName1 = "Common Name"};
-					if (fieldName == "Most_Recent_Observation"){fieldName1 = "Most Recent Observation"};
+					if (fieldName == "ScientificName"){fieldName1 = "Scientific Name"};
+					if (fieldName == "Most_Recent_Observation"){fieldName1 = "MESA Status"};
+					if (fieldName == "Most_Recent_Observation"){fieldName1 = "Last Sited"};
                       return {
                         label: fieldName1,
                         field: fieldName,
@@ -340,7 +342,7 @@ const MESAtowns = new FeatureLayer({
 
   <body class="claro">
     <div id="gridDiv" class="esri-widget">
-      <span style="font-size:24px;font-weight:bold;">MESA Specices Viewer <img style="margin-left:30px;display:none;" src ="images/heartbeat.gif" id="loading" alt="Loading"></span><h1 id="townname"></h1>
+      <span style="font-size:24px;font-weight:bold;">Massachusetts Engangered Species Viewer <img style="margin-left:30px;display:none;" src ="images/heartbeat.gif" id="loading" alt="Loading"></span><h1 id="townname"></h1>
       <p>
         Click on a City/Town in the map to view the species located in that
         area.
