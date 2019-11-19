@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, maximum-scale=1,user-scalable=no"
+    />
+    <title>Query Related Features - 4.13</title>
+
+    <style>
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #gridDiv {
+        padding: 10px;
+        max-width: 600px;
+      }
+      #viewDiv {
+        height: 100%;
+        width: 100%;
+      }
+      #clearButton {
+        margin-top: 5px;
+        display: none;
+      }
+      .dgrid {
+        height: auto !important;
+      }
+      .dgrid .dgrid-scroller {
+        position: relative;
+        max-height: 200px;
+        overflow: auto;
+      }
+	  	  
+.dijitMenuItem {
+  background-color: white;
+}
+
+    </style>
+	<link rel="stylesheet" href="https://js.arcgis.com/3.30/dijit/themes/claro/claro.css"> 
+    <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.13/"></script>
+
+    <script>
+      require([
+        "esri/Map",
+        "esri/Basemap",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/widgets/Legend",
+        "esri/widgets/Expand",
+		"esri/tasks/support/Query",
+		"esri/tasks/QueryTask",
+        "dgrid/Grid",
+		"dojo/parser",
+		"dijit/form/FilteringSelect",
+		"dojo/store/Memory",
+		"dojo/json",
+		"dojo/text!./js/species.json",
+		"dojo/domReady!"
+      ], function(Map, Basemap, MapView, FeatureLayer, Legend, Expand, Query, QueryTask, Grid, parser, FilteringSelect, Memory, json, speices) {
+		var MESATOWN_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/0"; 
+		//MESA Towns layer
+        var MESATABLE_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/1"; //Table layer
+		
+		parser.parse(); //scan DOM, instantiate nodes with dojo attributes
+		
+const MESAtowns = new FeatureLayer({
+		  url: MESATOWN_URL,
+		  title: "Massachusetts Towns",
+          outFields: ["Town"],
+        });
+ 
+        const map = new Map({
+          basemap: "topo",
+          layers: [MESAtowns]
+        });
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: map,
+		  center : [-71.7, 42.1],
+		  zoom : 9,
+		  ui: {
+            components: ["attribution"]
+          },
+          popup: {
+            autoOpenEnabled: false
+          }
+        });
+		
+		
+		view.when(disableZooming);
+
+        /**
+         * Disables all zoom gestures on the given view instance.
+         * @param {esri/views/MapView} view - The MapView instance on which to
+		 * disable zooming gestures.
+         */
+        function disableZooming(view) {
+          view.popup.dockEnabled = true;
+
+          // Removes the zoom action on the popup
+          view.popup.actions = [];
+
+          // stops propagation of default behavior when an event fires
+          function stopEvtPropagation(event) {
+            event.stopPropagation();
+          }
+
+          // exlude the zoom widget from the default UI
+          view.ui.components = ["attribution"];
+
+          // disable mouse wheel scroll zooming on the view
+          view.on("mouse-wheel", stopEvtPropagation);
+
+          // disable zooming via double-click on the view
+          view.on("double-click", stopEvtPropagation);
+
+          // disable zooming out via double-click + Control on the view
+          view.on("double-click", ["Control"], stopEvtPropagation);
+
+          // disables pinch-zoom and panning on the view
+          view.on("drag", stopEvtPropagation);
+
+          // disable the view's zoom box to prevent the Shift + drag
+          // and Shift + Control + drag zoom gestures.
+          view.on("drag", ["Shift"], stopEvtPropagation);
+          view.on("drag", ["Shift", "Control"], stopEvtPropagation);
+
+          // prevents zooming with the + and - keys
+          view.on("key-down", function(event) {
+            var prohibitedKeys = ["+", "-", "Shift", "_", "="];
+            var keyPressed = event.key;
+            if (prohibitedKeys.indexOf(keyPressed) !== -1) {
+              event.stopPropagation();
+            }
+          });
+
+          return view;
+        }
+		
+        const legend = new Legend({ view: view });
+        // Expand widget to expand and contract the legend widget
+        const legendExpand = new Expand({
+          expandTooltip: "Show Legend",
+          expanded: false,
+          view: view,
+          content: legend
+        });
+
+        // Add widgets to the view
+        view.ui.add(document.getElementById("gridDiv"), "bottom-left");
+        view.ui.add(legendExpand, "top-right");
+
+        // Initialize variables
+        let highlight, grid;
+
+        // call clearMap method when clear is clicked
+        const clearbutton = document.getElementById("clearButton");
+        clearbutton.addEventListener("click", clearMap);
+
+        MESAtowns.load().then(function() {
+          return createGrid().then(function(g) {
+            grid = g;
+          });
+        });
+
+        view.on("click", function(event) {
+		 document.getElementById("loading").style.display = "inline";
+          clearMap();
+          queryFeatures(event);
+        });
+	
+    // lood up speices json	
+	var MESAStore = new Memory({idProperty : "name1",data : json.parse(speices)});
+	// create FilteringSelect widget, populating its options from the store
+	var MESASelect = new FilteringSelect({
+			class : "mySelect",
+			name : "MESASelect",
+			placeHolder : "Select a Species",
+			style : "background-color:white;width:400px;left:1.8%;top:1.8em;position:absolute;z-Index:999;",
+			required : false,
+			maxHeight : 312,
+			store : MESAStore,
+			onChange : function (val) {
+				if (val != "") { //Stops the onChange from a reset from firing this again
+					makeSpeciesQuery(val);
+					//MESAtowns.definitionExpression = "TOWN='LYNN'";
+				}
+			}
+		}, "MESASelect");
+	MESASelect.startup();	
+	
+	function makeSpeciesQuery(val){
+		        var QueryMESATask = new QueryTask({
+					url: "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/1"
+					});
+		var params = new Query({
+          returnGeometry: false,
+          outFields: ["TOWN"],
+		 // returnDistinctValues = true
+        });
+       params.where ="CommonName = '"+val+"'";
+			QueryMESATask            
+			.execute(params)
+			.then(showResults)
+
+            function showResults(response) {
+                var resultItems = [];
+                var resultCount = response.features.length;
+                for (var i = 0; i < resultCount; i++) {
+                    var featureAttributes = response.features[i].attributes;
+                    for (var attr in featureAttributes) {
+						resultItems.push("'"+featureAttributes[attr]+"'");
+                    }
+                }
+		   MESAtowns.definitionExpression = "TOWN IN (" +resultItems.toString()+ ")"			
+            } 
+		
+	}
+		
+        function queryFeatures(screenPoint) {
+          const point = view.toMap(screenPoint);
+          // Query the for the feature ids where the user clicked
+          MESAtowns
+            .queryObjectIds({
+              geometry: point,
+              spatialRelationship: "intersects",
+              returnGeometry: false,
+              outFields: ["TOWN"]
+            })
+
+            .then(function(objectIds) {
+				var MytownQuery = MESAtowns.createQuery();
+				MytownQuery.outFields = ["TOWN"];
+				MytownQuery.where = "OBJECTID=" + objectIds;
+				MESAtowns.queryFeatures(MytownQuery)
+				.then(function(response){		
+				document.getElementById("townname").innerHTML = response.features[0].attributes.TOWN
+					}); 
+              if (!objectIds.length) {
+			 document.getElementById("loading").style.display = "none";
+                return;
+              }
+
+              // Highlight the area returned from the first query
+              view.whenLayerView(MESAtowns).then(function(layerView) {
+                if (highlight) {
+                  highlight.remove();
+                }
+                highlight = layerView.highlight(objectIds);
+              });
+
+              // Query the for the related features for the features ids found
+              return MESAtowns.queryRelatedFeatures({
+                outFields: [/*"Town", */"CommonName", /*"ScientificName",*/ "Most_Recent_Observation"],
+                relationshipId: MESAtowns.relationships[0].id,
+                objectIds: objectIds
+              });
+            })
+
+            .then(function(relatedFeatureSetByObjectId) {
+              if (!relatedFeatureSetByObjectId) {
+                return;
+              }
+			  
+              // Create a grid with the data
+              Object.keys(relatedFeatureSetByObjectId).forEach(function(
+                objectId
+              ) {
+                // get the attributes of the FeatureSet
+                const relatedFeatureSet = relatedFeatureSetByObjectId[objectId];
+                const rows = relatedFeatureSet.features.map(function(feature) {
+				  //alert(feature.attributes.CommonName)
+				  return feature.attributes;
+                });
+
+                if (!rows.length) {
+                  return;
+                }
+
+                // create a new div for the grid of related features
+                // append to queryResults div inside of the gridDiv
+                const gridDiv = document.createElement("div");
+                const results = document.getElementById("queryResults");
+                results.appendChild(gridDiv);
+
+                // destroy current grid if exists
+                if (grid) {
+                  grid.destroy();
+                }
+                // create new grid to hold the results of the query
+                grid = new Grid(
+                  {
+                    columns: Object.keys(rows[0]).map(function(fieldName) {
+					//little minor hack, can't get the alias from the object - take a look at feature?
+					if (fieldName == "CommonName"){fieldName1 = "Common Name"};
+					if (fieldName == "Most_Recent_Observation"){fieldName1 = "Most Recent Observation"};
+                      return {
+                        label: fieldName1,
+                        field: fieldName,
+                        sortable: true
+                      };
+                    })
+                  },
+                  gridDiv
+                );
+
+                // add the data to the grid
+                grid.renderArray(rows);
+				grid.set('sort', 'CommonName');
+              });
+              clearbutton.style.display = "inline";
+			  document.getElementById("loading").style.display = "none";
+            })
+            .catch(function(error) {
+              console.error(error);
+            });
+        }
+
+        function clearMap() {
+		   document.getElementById("townname").innerHTML = "";
+          if (highlight) {
+            highlight.remove();
+          }
+          if (grid) {
+            grid.destroy();
+          }
+          clearbutton.style.display = "none";
+        }
+      });
+    </script>
+  </head>
+
+  <body class="claro">
+    <div id="gridDiv" class="esri-widget">
+      <span style="font-size:24px;font-weight:bold;">MESA Specices Viewer <img style="margin-left:30px;display:none;" src ="images/heartbeat.gif" id="loading" alt="Loading"></span><h1 id="townname"></h1>
+      <p>
+        Click on a City/Town in the map to view the species located in that
+        area.
+      </p>
+      <div id="queryResults"></div>
+      <button id="clearButton" class="esri-widget">Clear Query</button>
+    </div>
+    <div id="viewDiv"></div><div id="MESASelect"></div>
+  </body>
+</html>
