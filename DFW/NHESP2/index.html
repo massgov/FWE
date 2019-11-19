@@ -6,7 +6,7 @@
       name="viewport"
       content="initial-scale=1, maximum-scale=1,user-scalable=no"
     />
-    <title>Rare Species by Town Viewer | Mass.gov</title>
+    <title>Rare Species Viewer | Mass.gov</title>
 
     <style>
       html,
@@ -27,6 +27,10 @@
       #clearButton {
         margin-top: 5px;
         display: none;
+      }     
+      #clearMapButton {
+        margin-top: 5px;
+        display: none;
       }
       .dgrid {
         height: auto !important;
@@ -37,9 +41,9 @@
         overflow: auto;
       }
 	  	  
-	.dijitMenuItem {
-	  background-color: white;
-	}
+      .dijitMenuItem {
+      background-color: white;
+      }
 
     </style>
 	<link rel="stylesheet" href="https://js.arcgis.com/3.30/dijit/themes/claro/claro.css"> 
@@ -168,6 +172,15 @@ const MESAtowns = new FeatureLayer({
         const clearbutton = document.getElementById("clearButton");
         clearbutton.addEventListener("click", clearMap);
 
+        // call clearMap method when clear is clicked
+        const clearmapbutton = document.getElementById("clearMapButton");
+        clearmapbutton.addEventListener("click", clearDef);
+		function clearDef(){
+		MESAtowns.definitionExpression = ""
+		document.getElementById("clearMapButton").style.display = "none";
+		MESASelect.set('value', "");
+		};
+
         MESAtowns.load().then(function() {
           return createGrid().then(function(g) {
             grid = g;
@@ -194,7 +207,7 @@ const MESAtowns = new FeatureLayer({
 			onChange : function (val) {
 				if (val != "") { //Stops the onChange from a reset from firing this again
 					makeSpeciesQuery(val);
-					//MESAtowns.definitionExpression = "TOWN='LYNN'";
+					document.getElementById("clearMapButton").style.display = "inline";
 				}
 			}
 		}, "MESASelect");
@@ -305,7 +318,7 @@ const MESAtowns = new FeatureLayer({
 					//little minor hack, can't get the alias from the object - take a look at feature?
 					if (fieldName == "CommonName"){fieldName1 = "Common Name"}
 					if (fieldName == "ScientificName"){fieldName1 = "Scientific Name"};
-					if (fieldName == "Most_Recent_Observation"){fieldName1 = "MESA Status"};
+					if (fieldName == "MESA_Status"){fieldName1 = "MESA Status"};
 					if (fieldName == "Most_Recent_Observation"){fieldName1 = "Last Sited"};
                       return {
                         label: fieldName1,
@@ -345,13 +358,12 @@ const MESAtowns = new FeatureLayer({
 
   <body class="claro">
     <div id="gridDiv" class="esri-widget">
-      <span style="font-size:24px;font-weight:bold;">Massachusetts Engangered Species Viewer <img style="display:none;" src ="images/heartbeat.gif" id="loading" alt="Loading"></span><h1 id="townname"></h1>
+      <span style="display:none;font-size:24px;font-weight:bold;"></span><h1 id="townname"></h1>
       <p>
-        Click on a City/Town in the map to view the species located in that
-        area.
-      </p>
+        Click on a City/Town in the map to view the species located in that area.
+      </p><img style="display:none;" src ="images/heartbeat.gif" id="loading" alt="Loading" />
       <div id="queryResults"></div>
-      <button id="clearButton" class="esri-widget">Clear Query</button>
+      <button id="clearButton" class="esri-widget">Clear Query</button><button id="clearMapButton" class="esri-widget">Clear Map</button>
     </div>
     <div id="viewDiv"></div><div id="MESASelect"></div>
   </body>
