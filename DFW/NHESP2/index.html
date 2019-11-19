@@ -37,9 +37,9 @@
         overflow: auto;
       }
 	  	  
-.dijitMenuItem {
-  background-color: white;
-}
+	.dijitMenuItem {
+	  background-color: white;
+	}
 
     </style>
 	<link rel="stylesheet" href="https://js.arcgis.com/3.30/dijit/themes/claro/claro.css"> 
@@ -85,12 +85,15 @@ const MESAtowns = new FeatureLayer({
           container: "viewDiv",
           map: map,
 		  center : [-71.7, 42.1],
-		  zoom : 9,
+		  zoom : 8,
 		  ui: {
             components: ["attribution"]
           },
           popup: {
             autoOpenEnabled: false
+          },
+            constraints: {
+            rotationEnabled: false
           }
         });
 		
@@ -109,15 +112,15 @@ const MESAtowns = new FeatureLayer({
           view.popup.actions = [];
 
           // stops propagation of default behavior when an event fires
-          function stopEvtPropagation(event) {
+         function stopEvtPropagation(event) {
             event.stopPropagation();
-          }
+         }
 
           // exlude the zoom widget from the default UI
           view.ui.components = ["attribution"];
 
           // disable mouse wheel scroll zooming on the view
-          view.on("mouse-wheel", stopEvtPropagation);
+         // view.on("mouse-wheel", stopEvtPropagation);
 
           // disable zooming via double-click on the view
           view.on("double-click", stopEvtPropagation);
@@ -126,7 +129,7 @@ const MESAtowns = new FeatureLayer({
           view.on("double-click", ["Control"], stopEvtPropagation);
 
           // disables pinch-zoom and panning on the view
-          view.on("drag", stopEvtPropagation);
+          //view.on("drag", stopEvtPropagation);
 
           // disable the view's zoom box to prevent the Shift + drag
           // and Shift + Control + drag zoom gestures.
@@ -300,7 +303,7 @@ const MESAtowns = new FeatureLayer({
                   {
                     columns: Object.keys(rows[0]).map(function(fieldName) {
 					//little minor hack, can't get the alias from the object - take a look at feature?
-					if (fieldName == "CommonName"){fieldName1 = "Common Name"};
+					if (fieldName == "CommonName"){fieldName1 = "Common Name"}
 					if (fieldName == "ScientificName"){fieldName1 = "Scientific Name"};
 					if (fieldName == "Most_Recent_Observation"){fieldName1 = "MESA Status"};
 					if (fieldName == "Most_Recent_Observation"){fieldName1 = "Last Sited"};
@@ -342,7 +345,7 @@ const MESAtowns = new FeatureLayer({
 
   <body class="claro">
     <div id="gridDiv" class="esri-widget">
-      <span style="font-size:24px;font-weight:bold;">Massachusetts Engangered Species Viewer <img style="margin-left:30px;display:none;" src ="images/heartbeat.gif" id="loading" alt="Loading"></span><h1 id="townname"></h1>
+      <span style="font-size:24px;font-weight:bold;">Massachusetts Engangered Species Viewer <img style="display:none;" src ="images/heartbeat.gif" id="loading" alt="Loading"></span><h1 id="townname"></h1>
       <p>
         Click on a City/Town in the map to view the species located in that
         area.
