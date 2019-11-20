@@ -168,11 +168,11 @@ const MESAtowns = new FeatureLayer({
         // Initialize variables
         let highlight, grid;
 
-        // call clearMap method when clear is clicked
+        // call clearGrid method when clear is clicked
         const clearbutton = document.getElementById("clearButton");
-        clearbutton.addEventListener("click", clearMap);
+        clearbutton.addEventListener("click", clearGrid);
 
-        // call clearMap method when clear is clicked
+        // call clearGrid method when clear is clicked
         const clearmapbutton = document.getElementById("clearMapButton");
         clearmapbutton.addEventListener("click", clearDef);
 		function clearDef(){
@@ -189,7 +189,7 @@ const MESAtowns = new FeatureLayer({
 
         view.on("click", function(event) {
 		 document.getElementById("loading").style.display = "inline";
-          clearMap();
+          clearGrid();
           queryFeatures(event);
         });
 	
@@ -280,7 +280,7 @@ const MESAtowns = new FeatureLayer({
                 objectIds: objectIds
               });
             })
-
+			
             .then(function(relatedFeatureSetByObjectId) {
               if (!relatedFeatureSetByObjectId) {
                 return;
@@ -293,7 +293,13 @@ const MESAtowns = new FeatureLayer({
                 // get the attributes of the FeatureSet
                 const relatedFeatureSet = relatedFeatureSetByObjectId[objectId];
                 const rows = relatedFeatureSet.features.map(function(feature) {
-				  //alert(feature.attributes.CommonName)
+				 // if (feature.attributes.CommonName == "Acadian Quillwort"){alert(feature.attributes.Most_Recent_Observation)}
+				 				// if (!){document.getElementById("theYear").innerHTML = "No Value"}
+
+                 //have to deal with the double comma.  It breaks queries but doesn't play nice with this comparison
+                 if (feature.attributes.CommonName == dijit.byId('MESASelect').attr('value').replace("''","'")){document.getElementById("theSpecies").innerHTML = "<span style='color:black;font-weight:bold;'>Current Selection:</span> " + feature.attributes.CommonName;document.getElementById("observation").innerHTML = "Last observed in "; if (isBlank(feature.attributes.Most_Recent_Observation)){document.getElementById("theYear").innerHTML = " [No date recorded]"} else {document.getElementById("theYear").innerHTML = feature.attributes.Most_Recent_Observation}};
+
+				 
 				  return feature.attributes;
                 });
 
@@ -330,8 +336,9 @@ const MESAtowns = new FeatureLayer({
                   gridDiv
                 );
 
-                // add the data to the grid
+                //add the data to the grid
                 grid.renderArray(rows);
+				//alert(rows[0].CommonName);
 				grid.set('sort', 'CommonName');
               });
               clearbutton.style.display = "inline";
@@ -342,8 +349,11 @@ const MESAtowns = new FeatureLayer({
             });
         }
 
-        function clearMap() {
+        function clearGrid() {
 		   document.getElementById("townname").innerHTML = "";
+		   document.getElementById("theSpecies").innerHTML = "";
+		   document.getElementById("observation").innerHTML = "";
+		   document.getElementById("theYear").innerHTML = "";
           if (highlight) {
             highlight.remove();
           }
@@ -352,15 +362,18 @@ const MESAtowns = new FeatureLayer({
           }
           clearbutton.style.display = "none";
         }
+		 function isBlank(str) {
+			return (!str || /^\s*$/.test(str));
+		}
       });
     </script>
   </head>
 
   <body class="claro">
     <div id="gridDiv" class="esri-widget">
-      <span style="display:none;font-size:24px;font-weight:bold;"></span><h1 id="townname"></h1>
-      <p>
-        Click on a City/Town in the map to view the species located in that area.
+      <div id="townname" style="font-size:30px;font-weight:bold";></div><div id="theSpecies" style="margin-top:1%;font-size:14px";></div><span id="observation" style="margin-top:1%;font-size:14px;"></span> <span id="theYear"></span>
+      <p id="clicktowntext">
+        Click on a City/Town to view the species in that area.
       </p><img style="display:none;" src ="images/heartbeat.gif" id="loading" alt="Loading" />
       <div id="queryResults"></div>
       <button id="clearButton" class="esri-widget">Clear Query</button><button id="clearMapButton" class="esri-widget">Clear Map</button>
