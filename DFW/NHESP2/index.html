@@ -283,8 +283,7 @@ const MESAtowns = new FeatureLayer({
                 const relatedFeatureSet = relatedFeatureSetByObjectId[objectId];
                 const rows = relatedFeatureSet.features.map(function(feature) {
                  //have to deal with the double comma.  It breaks queries but doesn't play nice with this comparison (the double replace is for one value namely - Bayard's Green Adder's-mouth)
-                 if (feature.attributes.CommonName == dijit.byId('MESASelect').attr('value').replace("''","'").replace("''","'")){document.getElementById("theSpecies").innerHTML = "<span style='color:black;font-weight:bold;'>Current Selection:</span> " + feature.attributes.CommonName;document.getElementById("observation").innerHTML = "Last observed in "; if (isBlank(feature.attributes.Most_Recent_Observation)){document.getElementById("theYear").innerHTML = " [No date recorded]"} else {document.getElementById("theYear").innerHTML = feature.attributes.Most_Recent_Observation}};
-
+                 if (feature.attributes.CommonName == dijit.byId('MESASelect').attr('value').replace("''","'").replace("''","'")){document.getElementById("theSpecies").innerHTML = "<span style='color:black;font-weight:bold;'>Current Selection:</span> " + feature.attributes.CommonName;document.getElementById("observation").innerHTML = "<span style='font-weight:bold;'>></span> Last observed in "; if (isBlank(feature.attributes.Most_Recent_Observation)){document.getElementById("theYear").innerHTML = " [No date recorded]"} else {document.getElementById("theYear").innerHTML = feature.attributes.Most_Recent_Observation}};
 				 
 				  return feature.attributes;
                 });
