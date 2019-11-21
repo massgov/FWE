@@ -56,7 +56,6 @@
         "esri/Basemap",
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
-        "esri/widgets/Legend",
         "esri/widgets/Expand",
 		"esri/tasks/support/Query",
 		"esri/tasks/QueryTask",
@@ -67,7 +66,7 @@
 		"dojo/json",
 		"dojo/text!./js/species.json",
 		"dojo/domReady!"
-      ], function(Map, Basemap, MapView, FeatureLayer, Legend, Expand, Query, QueryTask, Grid, parser, FilteringSelect, Memory, json, speices) {
+      ], function(Map, Basemap, MapView, FeatureLayer, Expand, Query, QueryTask, Grid, parser, FilteringSelect, Memory, json, speices) {
 		var MESATOWN_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/0"; 
 		//MESA Towns layer
         var MESATABLE_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/1"; //Table layer
@@ -151,19 +150,10 @@ const MESAtowns = new FeatureLayer({
 
           return view;
         }
-		
-        const legend = new Legend({ view: view });
-        // Expand widget to expand and contract the legend widget
-        const legendExpand = new Expand({
-          expandTooltip: "Show Legend",
-          expanded: false,
-          view: view,
-          content: legend
-        });
 
         // Add widgets to the view
         view.ui.add(document.getElementById("gridDiv"), "bottom-left");
-        view.ui.add(legendExpand, "top-right");
+        //view.ui.add(legendExpand, "top-right");
 
         // Initialize variables
         let highlight, grid;
@@ -200,7 +190,7 @@ const MESAtowns = new FeatureLayer({
 			class : "mySelect",
 			name : "MESASelect",
 			placeHolder : "Select a Species",
-			style : "background-color:white;width:400px;left:1.2%;top:2.3em;position:absolute;z-Index:999;",
+			style : "background-color:white;width:400px;left:1.2%;top:0.6em;position:absolute;z-Index:999;",
 			required : false,
 			maxHeight : 312,
 			store : MESAStore,
@@ -219,8 +209,7 @@ const MESAtowns = new FeatureLayer({
 					});
 		var params = new Query({
           returnGeometry: false,
-          outFields: ["TOWN"],
-		 // returnDistinctValues = true
+          outFields: ["TOWN"]
         });
        params.where ="CommonName = '"+val+"'";
 			QueryMESATask            
@@ -243,7 +232,7 @@ const MESAtowns = new FeatureLayer({
 		
         function queryFeatures(screenPoint) {
           const point = view.toMap(screenPoint);
-          // Query the for the feature ids where the user clicked
+ // Query the for the feature ids where the user clicked         
           MESAtowns
             .queryObjectIds({
               geometry: point,
@@ -251,7 +240,7 @@ const MESAtowns = new FeatureLayer({
               returnGeometry: false,
               outFields: ["TOWN"]
             })
-
+//stuck in a query to get the town name first thing.
             .then(function(objectIds) {
 				var MytownQuery = MESAtowns.createQuery();
 				MytownQuery.outFields = ["TOWN"];
@@ -293,11 +282,8 @@ const MESAtowns = new FeatureLayer({
                 // get the attributes of the FeatureSet
                 const relatedFeatureSet = relatedFeatureSetByObjectId[objectId];
                 const rows = relatedFeatureSet.features.map(function(feature) {
-				 // if (feature.attributes.CommonName == "Acadian Quillwort"){alert(feature.attributes.Most_Recent_Observation)}
-				 				// if (!){document.getElementById("theYear").innerHTML = "No Value"}
-
-                 //have to deal with the double comma.  It breaks queries but doesn't play nice with this comparison
-                 if (feature.attributes.CommonName == dijit.byId('MESASelect').attr('value').replace("''","'")){document.getElementById("theSpecies").innerHTML = "<span style='color:black;font-weight:bold;'>Current Selection:</span> " + feature.attributes.CommonName;document.getElementById("observation").innerHTML = "Last observed in "; if (isBlank(feature.attributes.Most_Recent_Observation)){document.getElementById("theYear").innerHTML = " [No date recorded]"} else {document.getElementById("theYear").innerHTML = feature.attributes.Most_Recent_Observation}};
+                 //have to deal with the double comma.  It breaks queries but doesn't play nice with this comparison (the double replace is for one value namely - Bayard's Green Adder's-mouth)
+                 if (feature.attributes.CommonName == dijit.byId('MESASelect').attr('value').replace("''","'").replace("''","'")){document.getElementById("theSpecies").innerHTML = "<span style='color:black;font-weight:bold;'>Current Selection:</span> " + feature.attributes.CommonName;document.getElementById("observation").innerHTML = "Last observed in "; if (isBlank(feature.attributes.Most_Recent_Observation)){document.getElementById("theYear").innerHTML = " [No date recorded]"} else {document.getElementById("theYear").innerHTML = feature.attributes.Most_Recent_Observation}};
 
 				 
 				  return feature.attributes;
