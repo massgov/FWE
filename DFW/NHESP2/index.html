@@ -30,7 +30,6 @@
       }     
       #clearMapButton {
         margin-top: 5px;
-        display: none;
       }
       .dgrid {
         height: auto !important;
@@ -40,29 +39,13 @@
         max-height: 200px;
         overflow: auto;
       }
-	  	  
       .dijitMenuItem {
       background-color: white;
       }
-
      .dgrid-column-Town {
       display:none;
       }
-	  .dgrid-column-CommonName {
-      width: 13em;
-      }
-	  .dgrid-column-ScientificName {
-      width: 11em;
-      }
-	  .dgrid-column-Taxonomic_Group {
-      width: 6em;
-      }
-	  .dgrid-column-MESA_Status {
-      width: 2.4em;
-      }
-	  .dgrid-column-Most_Recent_Observation {
-      width: 4em;
-      }
+
     </style>
 	<link rel="stylesheet" href="https://js.arcgis.com/3.30/dijit/themes/claro/claro.css"> 
     <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css" />
@@ -190,7 +173,7 @@ const MESAtowns = new FeatureLayer({
         clearmapbutton.addEventListener("click", clearDef);
 		function clearDef(){
 		MESAtowns.definitionExpression = ""
-		document.getElementById("clearMapButton").style.display = "none";
+		//document.getElementById("clearMapButton").style.display = "none";
 		MESASelect.set('value', "");
 		};
 
@@ -268,7 +251,7 @@ const MESAtowns = new FeatureLayer({
 			  .then(function(objectIds) {
               if (!objectIds.length) {
 				document.getElementById("loading").style.display = "none";
-				document.getElementById("clicktowntext").style.display = "inline";  //if it's visible don't do anyting else show it.
+				document.getElementById("clicktowntext").style.display = "inline";  //if it's visible don't do anything else show it.
                 return;
               }
 
@@ -301,9 +284,8 @@ const MESAtowns = new FeatureLayer({
                 const relatedFeatureSet = relatedFeatureSetByObjectId[objectId];
                 const rows = relatedFeatureSet.features.map(function(feature) {
                  //have to deal with the double comma.  It breaks queries but doesn't play nice with this comparison (the double replace is for one value namely - Bayard's Green Adder's-mouth)
-                 if (feature.attributes.CommonName == dijit.byId('MESASelect').attr('value').replace("''","'").replace("''","'")){document.getElementById("townname").innerHTML = feature.attributes.Town;document.getElementById("theSpecies").innerHTML = "<span style='color:black;font-weight:bold;'>Current Selection:</span> " + feature.attributes.CommonName;document.getElementById("observation").innerHTML = "<span style='font-weight:bold;'>►</span> Last observed in "; if (isBlank(feature.attributes.Most_Recent_Observation)){document.getElementById("theYear").innerHTML = " Historic"} else {document.getElementById("theYear").innerHTML = feature.attributes.Most_Recent_Observation}}else{document.getElementById("townname").innerHTML = feature.attributes.Town};
+                 if (feature.attributes.CommonName == dijit.byId('MESASelect').attr('value').replace("''","'").replace("''","'")){document.getElementById("townname").innerHTML = feature.attributes.Town;document.getElementById("theSpecies").innerHTML = "<span style='color:black;font-weight:bold;'>Current Selection:</span> " + feature.attributes.CommonName;document.getElementById("observation").innerHTML = "<span style='font-weight:bold;'>►</span> Most Recent Observation: "; if (isBlank(feature.attributes.Most_Recent_Observation)){document.getElementById("theYear").innerHTML = " Historic"} else {document.getElementById("theYear").innerHTML = feature.attributes.Most_Recent_Observation}}else{document.getElementById("townname").innerHTML = feature.attributes.Town;};
 
-				 
 				  return feature.attributes;
                 });
 
@@ -345,7 +327,8 @@ const MESAtowns = new FeatureLayer({
 
                 //add the data to the grid
                 grid.renderArray(rows);
-				//alert(rows[0].CommonName);
+				//set def query - single town
+				MESAtowns.definitionExpression = "TOWN = '" + rows[0].Town + "'";
 				grid.set('sort', 'CommonName');
               });
               clearbutton.style.display = "inline";
