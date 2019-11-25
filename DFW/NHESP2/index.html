@@ -30,6 +30,7 @@
       }     
       #clearMapButton {
         margin-top: 5px;
+		display: none;
       }
       .dgrid {
         height: auto !important;
@@ -42,7 +43,7 @@
       .dijitMenuItem {
       background-color: white;
       }
-     .dgrid-column-Town {
+      .dgrid-column-Town {
       display:none;
       }
 
@@ -173,7 +174,7 @@ const MESAtowns = new FeatureLayer({
         clearmapbutton.addEventListener("click", clearDef);
 		function clearDef(){
 		MESAtowns.definitionExpression = ""
-		//document.getElementById("clearMapButton").style.display = "none";
+		document.getElementById("clearMapButton").style.display = "none";
 		MESASelect.set('value', "");
 		};
 
@@ -329,6 +330,7 @@ const MESAtowns = new FeatureLayer({
                 grid.renderArray(rows);
 				//set def query - single town
 				MESAtowns.definitionExpression = "TOWN = '" + rows[0].Town + "'";
+				document.getElementById("clearMapButton").style.display = "inline";
 				grid.set('sort', 'CommonName');
               });
               clearbutton.style.display = "inline";
