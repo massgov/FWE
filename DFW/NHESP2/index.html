@@ -274,9 +274,19 @@
 				document.getElementById("infoSpotThree").innerHTML = "<b>MESA Status:</b> " + MESA_Formatter(featureAttributes.MESA_Status);
 				makeTownsGrid(secondResult)
 		        MESAtowns.definitionExpression = "TOWN IN (" +resultItems.toString()+ ")";
+				
+view.goTo({                            // go to point with a custom animation duration
+  target: {
+      center: [ -71.7, 42.1 ]
+    }
+  });
+
 
 	            } 
 		}
+		
+
+
 
 	function destroyGrids(){
 	         if (grid1) {
@@ -439,13 +449,12 @@
                 //add the data to the grid
                 grid.renderArray(rows);
 				//set def query - single town
-				MESAtowns.definitionExpression = "TOWN = '" + rows[0].Town + "'";
 				grid.set('sort', 'CommonName');
               });
               clearbutton.style.display = "inline";
-			  MESASelect.set('value', "");
-			  document.getElementById("loading").style.display = "none";
-              //document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+
+	      document.getElementById("loading").style.display = "none";
+              document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
             })
             .catch(function(error) {
               console.error(error);
@@ -517,7 +526,7 @@
 
   <body class="claro">
 
-    <div id="gridDiv" class="esri-widget">
+    <div id="gridDiv" style="display:none;" class="esri-widget">
       <span id="gridTitle" style="font-size:24px;line-height: 105%;"></span><img style="display:none;margin-left:14px;" src ="images/heartbeat.gif" id="loading" alt="Loading" /><br /><span id="infoSpotOne" style="margin-top:1%;font-size:14px"></span><br /><span id="infoSpotTwo" style="margin-top:1%;font-size:14px;"></span> <span id="infoSpotThree"></span>
       
       <div id="queryResults"></div>
