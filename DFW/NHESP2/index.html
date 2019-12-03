@@ -232,9 +232,9 @@
         });
 
         view.on("click", function(event) {
-/* 		 document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+		 //document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
 		 document.getElementById("loading").style.display = "inline";
-		 document.getElementById("instructDiv").style.display = "none"; */
+		 //document.getElementById("instructDiv").style.display = "none"; 
          queryFeatures(event);
         });
 	
@@ -257,6 +257,8 @@
 				if (val != "") { //Stops the onChange from a reset from firing this again
 					makeSpeciesQuery(val);
 				    document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+					document.getElementById("loading").style.display = "none";
+		            document.getElementById("instructDiv").style.display = "none"; 
 				}
 
 			}
@@ -308,12 +310,10 @@
 				document.getElementById("infoSpotOne").innerHTML = "<b>Taxonomic Group:</b> " + featureAttributes.Taxonomic_Group;
 				document.getElementById("infoSpotThree").innerHTML = "<b>MESA Status:</b> " + MESA_Formatter(featureAttributes.MESA_Status);
 				makeTownsGrid(secondResult)
-		        MESAtowns.definitionExpression = "TOWN IN (" +resultItems.toString()+ ")";
-
+		        MESAtowns.definitionExpression = "TOWN IN (" +resultItems.toString()+ ")";  //definition expression for the map
 	            } 
 		}
 		
-
 	function destroyGrids(){
 	         if (grid1) {
                   grid1.destroy();
@@ -363,6 +363,8 @@
 				var row = grid.row(event);
 				console.log('Row clicked:', row.data);
 			}); */
+			  document.getElementById("loading").style.display = "none";
+              document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
 }
 
 // highlight features based on a query result from the grid selection
