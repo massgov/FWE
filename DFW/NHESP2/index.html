@@ -47,8 +47,8 @@
         border-style:none !important;
       }
 	  .dgrid-row {
-       height: 16px;
-	           border-style:none;
+       min-height: 16px;
+	   border-style:none;
       }
       .dgrid .dgrid-scroller {
         position: relative;
@@ -62,11 +62,12 @@
       display:none;
       }
 	  .dgrid-column-Most_Recent_Observation {
-      width:90px;
+      max-width:90px;
       }
 	  .dgrid-column-MESA_Status {
-      width:90px;
-      }
+      max-width:90px;
+	  }
+	  	  
 	  #mesa_obs{
 		  margin-left:20px;
 		  font-weight: bold;
@@ -175,6 +176,10 @@
 			fillOpacity: 0.1
           }
         });
+		alert(window.screen.availWidth)
+		if (window.screen.availWidth < 256){
+			view.scale = 3124000
+			};
 		
 		var toggle = new BasemapToggle({
 		view: view,  // The view that provides access to the map's "streets" basemap
