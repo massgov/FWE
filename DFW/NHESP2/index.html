@@ -20,6 +20,7 @@
         padding: 10px;
         max-width: 800px;
 		z-Index:999;
+		max-height:310px;
       }      
 	  #instructDiv {
 		margin-top:30px;
@@ -40,10 +41,18 @@
       }
       .dgrid {
         height: auto !important;
+		font-size:10px;
+      }
+      .dgrid-cell {
+        border-style:none !important;
+      }
+	  .dgrid-row {
+       height: 16px;
+	           border-style:none;
       }
       .dgrid .dgrid-scroller {
         position: relative;
-        max-height: 200px;
+        max-height: 160px;
         overflow: auto;
       }
       .dijitMenuItem {
@@ -57,7 +66,11 @@
       }
 	  .dgrid-column-MESA_Status {
       width:90px;
-      }	  
+      }
+	  #mesa_obs{
+		  margin-left:20px;
+		  font-weight: bold;
+	  }
      /*	
 	 .dgrid-column-Common_Name {
       width:260px;
@@ -83,22 +96,22 @@
         "esri/layers/FeatureLayer",
         "esri/widgets/BasemapToggle",
         "esri/widgets/Expand",
-		"esri/widgets/Home",
+        "esri/widgets/Home",
         "esri/tasks/support/Query",
         "esri/tasks/QueryTask",
-		'dojo/_base/declare',
-		'dgrid/Keyboard', 
-		'dgrid/Selection',
+        'dojo/_base/declare',
+        'dgrid/Keyboard', 
+        'dgrid/Selection',
         "dgrid/Grid",
         "dgrid/OnDemandGrid",
         "dojo/parser",
         "dijit/form/FilteringSelect",
         "dojo/store/Memory",
         "dojo/json",
-        "dojo/text!./js/species.json",
-		"dojo/text!./js/scientific.json",
+        "dojo/text!./js/common.json",
+        "dojo/text!./js/scientific.json",
         "dojo/domReady!"
-      ], function(Map, Basemap, MapView, FeatureLayer, BasemapToggle, Expand, Home, Query, QueryTask, declare, Keyboard, Selection, Grid, OnDemandGrid, parser, FilteringSelect, Memory, json, speices, scientific) {
+      ], function(Map, Basemap, MapView, FeatureLayer, BasemapToggle, Expand, Home, Query, QueryTask, declare, Keyboard, Selection, Grid, OnDemandGrid, parser, FilteringSelect, Memory, json, common, scientific) {
 		var MESATOWN_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/0"; 
 		//MESA Towns layer
         var MESATABLE_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/1"; //Table layer
@@ -219,15 +232,18 @@
         });
 
         view.on("click", function(event) {
-		 document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+/* 		 document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
 		 document.getElementById("loading").style.display = "inline";
-		 document.getElementById("instructDiv").style.display = "none";
-		 
+		 document.getElementById("instructDiv").style.display = "none"; */
          queryFeatures(event);
         });
 	
-    // lood up speices json	
-	var MESAStore = new Memory({idProperty : "name1",data : json.parse(scientific)});
+	    const storebutton = document.getElementById("storeButton");
+        storebutton.addEventListener("click", changeStore);
+		
+		
+    // lood up scientific json for the dropdown box	
+	var MESAStore = new Memory({idProperty : "name1", data : json.parse(scientific)});
 	// create FilteringSelect widget, populating its options from the store
 	var MESASelect = new FilteringSelect({
 			class : "mySelect",
@@ -240,11 +256,30 @@
 			onChange : function (val) {
 				if (val != "") { //Stops the onChange from a reset from firing this again
 					makeSpeciesQuery(val);
-					document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+				    document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
 				}
+
 			}
 		}, "MESASelect");
-	MESASelect.startup();	
+	MESASelect.startup();
+	
+
+	function changeStore(){
+	var buttonChoice = document.getElementById("storeButton").innerHTML;
+	
+		if (buttonChoice == "<b>Switch to Common Name</b>"){
+		 document.getElementById("storeButton").innerHTML = "<b>Switch to Scientific Name</b>"
+		 var changeStore = new Memory({idProperty : "name1", data : json.parse(common)});
+		 }
+		 
+		 else
+		 {
+		 document.getElementById("storeButton").innerHTML = "<b>Switch to Common Name</b>"
+		 var changeStore = new Memory({idProperty : "name1", data : json.parse(scientific)});
+		 }
+		 MESASelect.set('store', changeStore)
+        }
+
     //Make the species query from the filterselect species choice	
 	function makeSpeciesQuery(val){
 
@@ -274,19 +309,10 @@
 				document.getElementById("infoSpotThree").innerHTML = "<b>MESA Status:</b> " + MESA_Formatter(featureAttributes.MESA_Status);
 				makeTownsGrid(secondResult)
 		        MESAtowns.definitionExpression = "TOWN IN (" +resultItems.toString()+ ")";
-				
-view.goTo({                            // go to point with a custom animation duration
-  target: {
-      center: [ -71.7, 42.1 ]
-    }
-  });
-
 
 	            } 
 		}
 		
-
-
 
 	function destroyGrids(){
 	         if (grid1) {
@@ -297,7 +323,7 @@ view.goTo({                            // go to point with a custom animation du
                 }
 			}
 	
-    function makeTownsGrid(theTowns){
+    function makeTownsGrid(theTowns){  //query for all towns with a particular species
                 const gridDiv = document.createElement("div");
                 const results = document.getElementById("queryResults");
 				if (highlight) {
@@ -354,7 +380,7 @@ view.goTo({                            // go to point with a custom animation du
 			}
 
 		
-        function queryFeatures(screenPoint) {
+        function queryFeatures(screenPoint) {  //query for all species in a particular town
           const point = view.toMap(screenPoint);
  // Query the for the feature ids where the user clicked         
           MESAtowns
@@ -368,7 +394,7 @@ view.goTo({                            // go to point with a custom animation du
 			  .then(function(objectIds) {
               if (!objectIds.length) {
 				document.getElementById("loading").style.display = "none";
-				//document.getElementById("instructDiv").style.display = "inline";  //if it's visible don't do anything else show it.
+				document.getElementById("instructDiv").style.display = "none";  //if it's visible don't do anything else show it.
                 return;
               }
 
@@ -404,8 +430,8 @@ view.goTo({                            // go to point with a custom animation du
                  //have to deal with the double comma.  It breaks queries but doesn't play nice with this comparison (the double replace is for one value namely - Bayard's Green Adder's-mouth)
                  if (feature.attributes.CommonName == dijit.byId('MESASelect').attr('value').replace("''","'").replace("''","'")){
 				  document.getElementById("gridTitle").innerHTML = feature.attributes.Town;
-			      document.getElementById("infoSpotOne").innerHTML = "<b>Current Selection:</b> " + feature.attributes.CommonName + " - " + feature.attributes.ScientificName + "<br /><b>Taxonomic Group:</b> " + feature.attributes.Taxonomic_Group +" "+ "<br /><b>MESA Status:</b> " + MESA_Formatter(feature.attributes.MESA_Status);
-				  document.getElementById("infoSpotTwo").innerHTML = "<b>Most Recent Observation:</b> ";
+			      document.getElementById("infoSpotOne").innerHTML = "<b>Current Selection:</b> " + feature.attributes.CommonName + " - " + feature.attributes.ScientificName + "<br /><b>Taxonomic Group:</b> " + feature.attributes.Taxonomic_Group + "<span id='mesa_obs'> MESA Status:</span> " + MESA_Formatter(feature.attributes.MESA_Status);
+				  document.getElementById("infoSpotTwo").innerHTML = " <span id='mesa_obs'> Most Recent Observation:</b> </span>";
 				  if (isBlank(feature.attributes.Most_Recent_Observation)){document.getElementById("infoSpotThree").innerHTML = " Historic"
 				  } 
 				  else 
@@ -452,9 +478,9 @@ view.goTo({                            // go to point with a custom animation du
 				grid.set('sort', 'CommonName');
               });
               clearbutton.style.display = "inline";
-
-	      document.getElementById("loading").style.display = "none";
+			  document.getElementById("loading").style.display = "none";
               document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+			  grid.resize();  //hack to fix the rows infrequently appearing behind the column headers
             })
             .catch(function(error) {
               console.error(error);
@@ -481,9 +507,9 @@ view.goTo({                            // go to point with a custom animation du
           clearbutton.style.display = "none";
         }
 		
-/* 		view.ui.add(toggle, "bottom-right");
+ 		view.ui.add(toggle, "bottom-right");
 		
-		var homeBtn = new Home({
+/*		var homeBtn = new Home({
           view: view
         }); */
 
@@ -525,15 +551,16 @@ view.goTo({                            // go to point with a custom animation du
   </head>
 
   <body class="claro">
-
     <div id="gridDiv" style="display:none;" class="esri-widget">
-      <span id="gridTitle" style="font-size:24px;line-height: 105%;"></span><img style="display:none;margin-left:14px;" src ="images/heartbeat.gif" id="loading" alt="Loading" /><br /><span id="infoSpotOne" style="margin-top:1%;font-size:14px"></span><br /><span id="infoSpotTwo" style="margin-top:1%;font-size:14px;"></span> <span id="infoSpotThree"></span>
+      <span id="gridTitle" style="font-size:22px;line-height: 105%;"></span><img style="display:none;margin-left:14px;" src ="images/heartbeat.gif" id="loading" alt="Loading" /><br /><span id="infoSpotOne" style="margin-top:1%;font-size:13px"> </span><span id="infoSpotTwo" style="margin-top:1%;font-size:13px;"> </span> <span id="infoSpotThree"></span>
       
       <div id="queryResults"></div>
       <button id="clearButton" class="esri-widget">Clear Query/Map</button>
     </div>
-    <div id="viewDiv"></div><div><div id="MESASelect"></div>  <div id="instructDiv" style="text-align:center;" class="esri-widget">
-        <div>Click on a City/Town to view the species in that area. <br />Click choose a species to see a distribution across the state.</span><br /><img style="text-align:center;height:4em;width:5em;" src ="images/table.png" id="tablegif" alt="table" /></div>
+    <div id="viewDiv"></div>
+	<div>
+	  <div style="inline-block;" id="MESASelect"></div><div id="instructDiv" style="text-align:center;" class="esri-widget"><button id="storeButton" class="esri-widget"><b>Switch to Common Name</b></button>
+        <div>Click on a City/Town to view the species in that area. <br />Click choose a species to see a distribution across the state.</div><br /><img style="text-align:center;height:4em;width:5em;" src ="images/table.png" id="tablegif" alt="table" /></div>
   </div></div>
   </body>
 </html>
