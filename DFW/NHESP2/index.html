@@ -178,21 +178,7 @@
         });
 		
 
-	  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-			view.scale = 3124000;
-			document.getElementById("instructDiv").style.fontSize = "smaller";
-/* 			document.getElementById("tablegif").style.display = "none";
-			document.getElementById("gridDiv").style.lineHeight = "50%";
-			document.getElementById("gridTitle").style.fontSize = "smaller";
 
-			document.getElementById("infoSpotOne").style.fontSize = "x-small";
-			document.getElementById("infoSpotTwo").style.fontSize = "x-small";
-			document.getElementById("infoSpotThree").style.fontSize = "x-small"; */
-			labelClass.minScale = 2500000;
-			MESAtowns.labelingInfo = [labelClass];
-			//document.getElementById("widget_MESASelect_dropdown").minWidth = "200px";
-			//view.center = [-71.7, 42.7];
-			};
 		 
 		var toggle = new BasemapToggle({
 		view: view,  // The view that provides access to the map's "streets" basemap
@@ -287,6 +273,18 @@
 			}
 		}, "MESASelect");
 	MESASelect.startup();
+	
+		  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+			view.scale = 3124000;
+			document.getElementById("instructDiv").style.fontSize = "smaller";
+			document.getElementById("gridTitle").style.fontSize = "medium";
+ 			document.getElementById("tablegif").style.display = "none";
+//			document.getElementById("gridDiv").style.lineHeight = "50%";
+			labelClass.minScale = 2500000;
+			MESAtowns.labelingInfo = [labelClass];
+			document.getElementById("widget_MESASelect").style.minWidth = "288px";
+			//view.center = [-71.7, 42.7];
+			};
 
 	function changeStore(){
 	var buttonChoice = document.getElementById("storeButton").innerHTML;
@@ -503,7 +501,7 @@
 						{ id: "ScientificName", field: "ScientificName", label: "Scientific Name" },
 						{ id: "Taxonomic_Group", field: "Taxonomic_Group", label: "Taxonomic Group" },
 						{ id: "MESA_Status", field: "MESA_Status", label: "MESA Status", formatter: MESA_Formatter},
-						{ id: "Most_Recent_Observation", field: "Most_Recent_Observation", label: "Most Recent Observation", formatter: historicFormatter}
+						{ id: "Most_Recent_Observation", field: "Most_Recent_Observation", label: "Most Recent Obs.", formatter: historicFormatter}
 					]
                   },
                   gridDiv
