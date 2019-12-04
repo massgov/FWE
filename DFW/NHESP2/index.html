@@ -52,7 +52,7 @@
       }
       .dgrid .dgrid-scroller {
         position: relative;
-        max-height: 160px;
+        max-height: 150px;
         overflow: auto;
       }
       .dijitMenuItem {
@@ -177,7 +177,7 @@
           }
         });
 		
-	  if (view.mobilecheck = true){
+	  if (view.mobilecheck == true){
 			view.scale = 3124000;
 			document.getElementById("tablegif").style.display = "none";
 			document.getElementById("gridDiv").style.lineHeight = "70%";
@@ -599,7 +599,7 @@
 
   <body class="claro">
     <div id="gridDiv" style="display:none;" class="esri-widget">
-      <span id="gridTitle" style="font-size:22px;line-height: 105%;"></span><img style="display:none;margin-left:14px;" src ="images/heartbeat.gif" id="loading" alt="Loading" /><br /><span id="infoSpotOne" style="margin-top:1%;font-size:13px"> </span><span id="infoSpotTwo" style="margin-top:1%;font-size:13px;"> </span><span id="infoSpotThree" style="margin-top:1%;font-size:13px;"></span>
+      <span id="gridTitle" style="font-size:22px;line-height: 105%;"></span><img style="display:none;margin-left:14px;" src ="images/heartbeat.gif" id="loading" alt="Loading" /><br /><span id="infoSpotOne" style="margin-top:1%;font-size:12px"> </span><span id="infoSpotTwo" style="margin-top:1%;font-size:12px;"> </span><span id="infoSpotThree" style="margin-top:1%;font-size:12px;"></span>
       
       <div id="queryResults"></div>
       <div><button id="clearButton" class="esri-widget">Clear Query/Map</button><button id="HideShowButton" class="esri-widget">Hide Table</button></div>
