@@ -41,13 +41,13 @@
       }
       .dgrid {
         height: auto !important;
-		font-size:10px;
+		font-size:14px;
       }
       .dgrid-cell {
         border-style:none !important;
       }
 	  .dgrid-row {
-       min-height: 16px;
+       min-height: 12px;
 	   border-style:none;
       }
       .dgrid .dgrid-scroller {
@@ -234,9 +234,11 @@
         hideshowbutton.addEventListener("click", hideShow);
 
         view.on("click", function(event) {
+			prepareForGrid()
 		 //document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
-		 document.getElementById("loading").style.display = "inline";
-		 document.getElementById("queryResults").style.display = "inline";
+		 //document.getElementById("loading").style.display = "inline";
+		 //document.getElementById("queryResults").style.display = "inline";
+		 //document.getElementById("HideShowButton").innerHTML = "Hide Table"
 		 //document.getElementById("instructDiv").style.display = "none"; 
          queryFeatures(event);
         });
@@ -249,6 +251,15 @@
             grid = g;
           });
         });	
+		
+		function prepareForGrid(){ //hide the things that need hiding before displaying the grid
+					document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+					document.getElementById("queryResults").style.display = "inline";
+					document.getElementById("HideShowButton").innerHTML = "Hide Table"
+					//document.getElementById("loading").style.display = "none";  //this can't happen here. has to happen after grid is rendered.
+		            document.getElementById("instructDiv").style.display = "none";
+		}
+		
 		
     // lood up scientific json for the dropdown box	
 	var MESAStore = new Memory({idProperty : "name1", data : json.parse(scientific)});
@@ -264,29 +275,14 @@
 			onChange : function (val) {
 				if (val != "") { //Stops the onChange from a reset from firing this again
 					makeSpeciesQuery(val);
-				    document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
-					document.getElementById("queryResults").style.display = "inline";
-					document.getElementById("loading").style.display = "none";
-		            document.getElementById("instructDiv").style.display = "none"; 
+					prepareForGrid();
 				}
 
 			}
 		}, "MESASelect");
 	MESASelect.startup();
-	
-		  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-			view.scale = 3124000;
-			document.getElementById("instructDiv").style.fontSize = "smaller";
-			document.getElementById("gridTitle").style.fontSize = "medium";
- 			document.getElementById("tablegif").style.display = "none";
-//			document.getElementById("gridDiv").style.lineHeight = "50%";
-			labelClass.minScale = 2500000;
-			MESAtowns.labelingInfo = [labelClass];
-			document.getElementById("widget_MESASelect").style.minWidth = "288px";
-			//view.center = [-71.7, 42.7];
-			};
-
-	function changeStore(){
+	//change store for MESA dropdown scientific/common names
+		function changeStore(){
 	var buttonChoice = document.getElementById("storeButton").innerHTML;
 		if (buttonChoice == "<b>Switch to Common Name</b>"){
 		 document.getElementById("storeButton").innerHTML = "<b>Switch to Scientific Name</b>"
@@ -300,7 +296,31 @@
 		 MESASelect.set('store', changeStore)
         }
 		
-	function hideShow(){
+		var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+		
+		//phone?
+		  if (isMobile) {
+			view.scale = 3124000;
+			document.getElementById("instructDiv").style.fontSize = "smaller";
+			document.getElementById("gridTitle").style.fontSize = "medium";
+ 			document.getElementById("tablegif").style.display = "none";
+//			document.getElementById("gridDiv").style.lineHeight = "50%";
+            //document.getElementsByClassName("dgrid").style.fontSize = "x-small";
+			labelClass.minScale = 2500000;
+			MESAtowns.labelingInfo = [labelClass];
+			document.getElementById("widget_MESASelect").style.minWidth = "288px";
+			view.center = [-71.7, 41];
+			};
+			
+			function shrinkTable(){ // doing this seperate grids don't exist on startup - call this after render
+			 x = document.getElementsByClassName("dgrid")
+			  x[0].style.fontSize = "x-small";
+			  grid.resize();
+			}
+
+
+		
+	function hideShow(){  //hide or show the table
 	var buttonChoice = document.getElementById("HideShowButton").innerHTML;
 		if (buttonChoice == "Hide Table"){
 		 document.getElementById("HideShowButton").innerHTML = "Show Table"
@@ -353,7 +373,7 @@
                   grid.destroy();
                 }
 			}
-	
+				
     function makeTownsGrid(theTowns){  //query for all towns with a particular species
                 const gridDiv = document.createElement("div");
                 const results = document.getElementById("queryResults");
@@ -362,7 +382,7 @@
 			    }
                 results.appendChild(gridDiv)
 				clearbutton.style.display = "inline"; //add the button back with the grid
-				document.getElementById("instructDiv").style.display = "none";  //hide the instructions div
+				//document.getElementById("instructDiv").style.display = "none";  //hide the instructions div
 				destroyGrids()//clear the Grids
                 //deal with the reporting for the other query, clear the species/town info if it is there.
 				document.getElementById("gridTitle").innerHTML = dijit.byId('MESASelect').attr('displayedValue').replace("''","'").replace("''","'");
@@ -378,7 +398,7 @@
 				selectionMode: 'single', // for Selection; only select a single row at a time
 				cellNavigation: false // for Keyboard; allow only row-level keyboard navigation
 				}, gridDiv);
-				grid1.renderArray(theTowns);	
+				grid1.renderArray(theTowns);
 
 			grid1.on('dgrid-select', function (event) {
 				// Report the item from the selected row to the console.
@@ -413,6 +433,7 @@
 		
         function queryFeatures(screenPoint) {  //query for all species in a particular town
           const point = view.toMap(screenPoint);
+		  //document.getElementById("loading").style.display = "inline";
  // Query the for the feature ids where the user clicked         
           MESAtowns
             .queryObjectIds({
@@ -425,7 +446,6 @@
 			  .then(function(objectIds) {
               if (!objectIds.length) {
 				document.getElementById("loading").style.display = "none";
-				document.getElementById("instructDiv").style.display = "none";
                 return;
               }
 
@@ -509,6 +529,7 @@
 
                 //add the data to the grid
                 grid.renderArray(rows);
+				if (isMobile) {shrinkTable()};
 				//set def query - single town
 				grid.set('sort', 'CommonName');
               });
