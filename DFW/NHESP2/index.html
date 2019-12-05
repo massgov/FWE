@@ -31,13 +31,17 @@
         height: 100%;
         width: 100%;
       }
-      #clearButton {
+      #theButtons {
         margin-top: 5px;
         display: none;
-      }     
-      #clearMapButton {
+      }           
+	  #clearButton {
         margin-top: 5px;
-		display: none;
+        //display: none;
+      }     
+      #hideShowButton {
+        margin-top: 5px;
+		//display: none;
       }
       .dgrid {
         height: auto !important;
@@ -229,18 +233,13 @@
         const clearbutton = document.getElementById("clearButton");
         clearbutton.addEventListener("click", clearGrid);
 		
-		        // call clearGrid method when clear is clicked
-        const hideshowbutton = document.getElementById("HideShowButton");
+		// call clearGrid method when clear is clicked
+        const hideshowbutton = document.getElementById("hideShowButton");
         hideshowbutton.addEventListener("click", hideShow);
 
         view.on("click", function(event) {
-			prepareForGrid()
-		 //document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
-		 //document.getElementById("loading").style.display = "inline";
-		 //document.getElementById("queryResults").style.display = "inline";
-		 //document.getElementById("HideShowButton").innerHTML = "Hide Table"
-		 //document.getElementById("instructDiv").style.display = "none"; 
-         queryFeatures(event);
+			prepareForGrid() 
+            queryFeatures(event);
         });
 	
 	    const storebutton = document.getElementById("storeButton");
@@ -255,7 +254,8 @@
 		function prepareForGrid(){ //hide the things that need hiding before displaying the grid
 					document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
 					document.getElementById("queryResults").style.display = "inline";
-					document.getElementById("HideShowButton").innerHTML = "Hide Table"
+					document.getElementById("loading").style.display = "inline";
+					document.getElementById("hideShowButton").innerHTML = "Hide Table"
 					//document.getElementById("loading").style.display = "none";  //this can't happen here. has to happen after grid is rendered.
 		            document.getElementById("instructDiv").style.display = "none";
 		}
@@ -304,8 +304,9 @@
 			document.getElementById("instructDiv").style.fontSize = "smaller";
 			document.getElementById("gridTitle").style.fontSize = "medium";
  			document.getElementById("tablegif").style.display = "none";
-//			document.getElementById("gridDiv").style.lineHeight = "50%";
-            //document.getElementsByClassName("dgrid").style.fontSize = "x-small";
+		   document.getElementById("infoSpotOne").style.fontSize = "smaller";
+		   document.getElementById("infoSpotTwo").style.fontSize = "smaller";
+		   document.getElementById("infoSpotThree").style.fontSize = "smaller";
 			labelClass.minScale = 2500000;
 			MESAtowns.labelingInfo = [labelClass];
 			document.getElementById("widget_MESASelect").style.minWidth = "288px";
@@ -321,18 +322,18 @@
 
 		
 	function hideShow(){  //hide or show the table
-	var buttonChoice = document.getElementById("HideShowButton").innerHTML;
+	var buttonChoice = document.getElementById("hideShowButton").innerHTML;
 		if (buttonChoice == "Hide Table"){
-		 document.getElementById("HideShowButton").innerHTML = "Show Table"
+		 document.getElementById("hideShowButton").innerHTML = "Show Table"
          document.getElementById("queryResults").style.display = "none";
 		 }
 		 else
 		 {
-		 document.getElementById("HideShowButton").innerHTML = "Hide Table"
+		 document.getElementById("hideShowButton").innerHTML = "Hide Table"
          document.getElementById("queryResults").style.display = "inline";
 		 }
         }
-
+//two queries coming up == first dropdown, second map click of a town.
     //Make the species query from the filterselect species choice	
 	function makeSpeciesQuery(val){
 
@@ -349,32 +350,26 @@
 			.then(showResults)
 		   
             function showResults(response) {
-                var resultItems = [];
+                var firstResult = [];
 				var secondResult= [];
 				
                 var resultCount = response.features.length;
                 for (var i = 0; i < resultCount; i++) {
                     var featureAttributes = response.features[i].attributes;
-					resultItems.push("'"+featureAttributes.Town+"'");			
+					firstResult.push("'"+featureAttributes.Town+"'");			
 					secondResult.push({town:featureAttributes.Town.toProperCase(), observed: featureAttributes.Most_Recent_Observation});
                 }
 				document.getElementById("infoSpotOne").innerHTML = "<b>Taxonomic Group:</b> " + featureAttributes.Taxonomic_Group;
 				document.getElementById("infoSpotThree").innerHTML = "<br /><b>MESA Status:</b> " + MESA_Formatter(featureAttributes.MESA_Status);
-				makeTownsGrid(secondResult)
-		        MESAtowns.definitionExpression = "TOWN IN (" +resultItems.toString()+ ")";  //definition expression for the map
+				
+		        MESAtowns.definitionExpression = "TOWN IN (" +firstResult.toString()+ ")";  //first result definition expression for the map
+				SpeciesInATownGrid(secondResult); //second result to make the SpeciesInATown grid
 	            } 
 		}
 		
-	function destroyGrids(){
-	         if (grid1) {
-                  grid1.destroy();
-                }                
-			if (grid) {
-                  grid.destroy();
-                }
-			}
+
 				
-    function makeTownsGrid(theTowns){  //query for all towns with a particular species
+    function SpeciesInATownGrid(theTowns){  //query for all towns with a particular species //this is a click event
                 const gridDiv = document.createElement("div");
                 const results = document.getElementById("queryResults");
 				if (highlight) {
@@ -382,12 +377,12 @@
 			    }
                 results.appendChild(gridDiv)
 				clearbutton.style.display = "inline"; //add the button back with the grid
-				//document.getElementById("instructDiv").style.display = "none";  //hide the instructions div
 				destroyGrids()//clear the Grids
+				
                 //deal with the reporting for the other query, clear the species/town info if it is there.
 				document.getElementById("gridTitle").innerHTML = dijit.byId('MESASelect').attr('displayedValue').replace("''","'").replace("''","'");
 		        document.getElementById("infoSpotTwo").innerHTML = "";
-				//---- 
+
 						// Create a new constructor by mixing in the components
 			    var CustomGrid = declare([ Grid, Keyboard, Selection ])
 				grid1 = new CustomGrid({
@@ -415,6 +410,15 @@
 			  document.getElementById("loading").style.display = "none";
               document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
 }
+
+	function destroyGrids(){
+	         if (grid1) {
+                  grid1.destroy();
+                }                
+			if (grid) {
+                  grid.destroy();
+                }
+			}
 
 // highlight features based on a query result from the grid selection
 		function clickTownGridHighlight(nameOfTown){
@@ -444,8 +448,12 @@
             })
 
 			  .then(function(objectIds) {
-              if (!objectIds.length) {
-				document.getElementById("loading").style.display = "none";
+              if (!objectIds.length) {  //clicked but not on a parcel
+			  document.getElementById("loading").style.display = "none";
+			  if (!grid||!grid1){
+				document.getElementById("gridDiv").style.display = "none"; //show the gridDiv
+			  }
+			  
                 return;
               }
 
@@ -561,6 +569,7 @@
 			  }
 		  destroyGrids()//clear the Grids
           clearbutton.style.display = "none";
+		  hideshowbutton.style.display = "none";
         }
 		
  		view.ui.add(toggle, "bottom-right");
@@ -609,10 +618,10 @@
 
   <body class="claro">
     <div id="gridDiv" style="display:none;" class="esri-widget">
-      <span id="gridTitle" style="font-size:22px;line-height: 105%;"></span><img style="display:none;margin-left:14px;" src ="images/heartbeat.gif" id="loading" alt="Loading" /><br /><span id="infoSpotOne" style="font-size:12px"> </span><span id="infoSpotTwo" style="font-size:12px;"> </span><span id="infoSpotThree" style="font-size:12px;"></span>
+      <span id="gridTitle" style="font-size:22px;line-height: 105%;"></span><img style="display:none;margin-left:14px;" src ="images/heartbeat.gif" id="loading" alt="Loading" /><br /><span id="infoSpotOne" style="font-size:14px"> </span><span id="infoSpotTwo" style="font-size:14px;"> </span><span id="infoSpotThree" style="font-size:14px;"></span>
       
       <div id="queryResults"></div>
-      <div><button id="clearButton" class="esri-widget">Clear Query/Map</button><button id="HideShowButton" class="esri-widget">Hide Table</button></div>
+    <div><button id="clearButton" class="esri-widget">Clear Query/Map</button><button id="hideShowButton" class="esri-widget">Hide Table</button></div>
     </div>
     <div id="viewDiv"></div>
 	<div>
