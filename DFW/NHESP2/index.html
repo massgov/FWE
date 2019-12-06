@@ -377,6 +377,7 @@
 			    }
                 results.appendChild(gridDiv)
 				clearbutton.style.display = "inline"; //add the button back with the grid
+			        hideShowButton.style.display = "inline";//add the button back with the grid
 				destroyGrids()//clear the Grids
 				
                 //deal with the reporting for the other query, clear the species/town info if it is there.
@@ -541,9 +542,10 @@
 				//set def query - single town
 				grid.set('sort', 'CommonName');
               });
-              clearbutton.style.display = "inline";
+                          clearbutton.style.display = "inline";//add the button back with the grid
+		  	  hideShowButton.style.display = "inline";//add the button back with the grid
 			  document.getElementById("loading").style.display = "none";
-              document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+                          document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
 			  grid.resize();  //hack to fix the rows infrequently appearing behind the column headers
             })
             .catch(function(error) {
@@ -568,7 +570,7 @@
 			  highlight.remove();
 			  }
 		  destroyGrids()//clear the Grids
-          clearbutton.style.display = "none";
+                  clearbutton.style.display = "none";
 		  hideshowbutton.style.display = "none";
         }
 		
