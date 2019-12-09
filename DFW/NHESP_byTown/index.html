@@ -6,7 +6,7 @@
       name="viewport"
       content="initial-scale=1, maximum-scale=1,user-scalable=no"
     />
-    <title>Rare Species Viewer by Town | Mass.gov</title>
+    <title>Rare Species Viewer | Mass.gov</title>
 
     <style>
       html,
@@ -17,34 +17,46 @@
         padding: 0;
       }
       #gridDiv {
-        padding: 10px;
+        padding: 8px;
         max-width: 800px;
 		z-Index:999;
+		max-height:400px;
       }      
 	  #instructDiv {
-	    margin-left: 3px;
-		margin-top: 30px;
+		margin-top:26px;
         padding: 10px;
-        max-width: 400px;
+        max-width: 380px;
       }
       #viewDiv {
         height: 100%;
         width: 100%;
       }
-      #clearButton {
+      #theButtons {
         margin-top: 5px;
         display: none;
-      }     
-      #clearMapButton {
+      }           
+	  #clearButton {
         margin-top: 5px;
-		display: none;
+        //display: none;
+      }     
+      #hideShowButton {
+        margin-top: 5px;
+		//display: none;
       }
       .dgrid {
         height: auto !important;
+		font-size:14px;
+      }
+      .dgrid-cell {
+        border-style:none !important;
+      }
+	  .dgrid-row {
+       min-height: 12px;
+	   border-style:none;
       }
       .dgrid .dgrid-scroller {
         position: relative;
-        max-height: 200px;
+        max-height: 130px;
         overflow: auto;
       }
       .dijitMenuItem {
@@ -53,24 +65,16 @@
       .dgrid-column-Town {
       display:none;
       }
-	  
 	  .dgrid-column-Most_Recent_Observation {
-      width:90px;
+      max-width:90px;
       }
 	  .dgrid-column-MESA_Status {
-      width:90px;
-      }	  
-     /*	
-	 .dgrid-column-Common_Name {
-      width:260px;
-      }
-	  .dgrid-column-Scientific_Name {
-      width:198px;
-      }	  
-	  .dgrid-column-Taxonomic_Group {
-      width:160px;
-      } 
-	  */
+      max-width:90px;
+	  }
+	  #mesa_obs{
+	  margin-left:20px;
+	  font-weight: bold;
+	  }
 	  
     </style>
 	<link rel="stylesheet" href="https://js.arcgis.com/3.30/dijit/themes/claro/claro.css"> 
@@ -85,28 +89,27 @@
         "esri/layers/FeatureLayer",
         "esri/widgets/BasemapToggle",
         "esri/widgets/Expand",
+        "esri/widgets/Home",
         "esri/tasks/support/Query",
         "esri/tasks/QueryTask",
-		'dojo/_base/declare',
-		'dgrid/Keyboard', 
-		'dgrid/Selection',
+        'dojo/_base/declare',
+        'dgrid/Keyboard', 
+        'dgrid/Selection',
         "dgrid/Grid",
         "dgrid/OnDemandGrid",
         "dojo/parser",
         "dijit/form/FilteringSelect",
         "dojo/store/Memory",
         "dojo/json",
-        "dojo/text!./js/species.json",
-		"dojo/text!./js/scientific.json",
-		"dojo/text!./js/towns.json",
+        "dojo/text!./js/towns2.json",
         "dojo/domReady!"
-      ], function(Map, Basemap, MapView, FeatureLayer, BasemapToggle, Expand, Query, QueryTask, declare, Keyboard, Selection, Grid, OnDemandGrid, parser, FilteringSelect, Memory, json, speices, scientific, towns) {
+      ], function(Map, Basemap, MapView, FeatureLayer, BasemapToggle, Expand, Home, Query, QueryTask, declare, Keyboard, Selection, Grid, OnDemandGrid, parser, FilteringSelect, Memory, json, towns2) {
 		var MESATOWN_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/0"; 
 		//MESA Towns layer
         var MESATABLE_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/1"; //Table layer
 		
 		parser.parse(); //scan DOM, instantiate nodes with dojo attributes
-		
+//LABLES		
 		const labelClass = {
 		  // autocasts as new LabelClass()
 		  symbol: {
@@ -123,26 +126,32 @@
 		  labelExpressionInfo: {
 			expression: "$feature.TOWN",
 		  },
-		  minScale:650000
+		  minScale:500001
 		};
 		
+/*		  var popupTown = {
+			"title": "{TOWN}",
+			"content": "<b>City:</b> {TOWN}"
+		  } */
+//LAYER	  
         const MESAtowns = new FeatureLayer({
 		  url: MESATOWN_URL,
 		  title: "Massachusetts Towns",
           outFields: ["TOWN"],
-		  labelingInfo: [labelClass]  
+		  labelingInfo: [labelClass]//,
+		  //popupTemplate: popupTown
         });
- 
+//MAP
         const map = new Map({
           layers: [MESAtowns],
 		  basemap: "topo"
         });
-
+//VIEW
         const view = new MapView({
           container: "viewDiv",
           map: map,
-		  center : [-71.7, 42.1],
-		  zoom : 9,
+		  center: [-71.7, 41.6],
+		  zoom: 8,
 		  ui: {
             components: ["attribution"]
           },
@@ -158,12 +167,12 @@
 			fillOpacity: 0.1
           }
         });
-		
+//TOGGLE for basemaps		 
 		var toggle = new BasemapToggle({
 		view: view,  // The view that provides access to the map's "streets" basemap
 		nextBasemap: "hybrid"  // Allows for toggling to the "hybrid" basemap
 		});
-		
+//DISABLE SOME ZOOMING		
 		view.when(disableZooming);
         /**
          * Disables all zoom gestures on the given view instance.
@@ -202,155 +211,82 @@
         view.ui.add(document.getElementById("gridDiv"), "bottom-left");
         view.ui.add(document.getElementById("instructDiv"), "top-left");
         // Initialize variables
-        let highlight, grid, grid1;
+        let highlight, grid;
 
         // call clearGrid method when clear is clicked
         const clearbutton = document.getElementById("clearButton");
         clearbutton.addEventListener("click", clearGrid);
-
+		
+		// call clearGrid method when clear is clicked
+        const hideshowbutton = document.getElementById("hideShowButton");
+        hideshowbutton.addEventListener("click", hideShow);
+	
         MESAtowns.load().then(function() {
           return createGrid().then(function(g) {
             grid = g;
           });
-        });
-
-/*          view.on("click", function(event) {
-		 document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
-		 document.getElementById("loading").style.display = "inline";
-		 document.getElementById("instructDiv").style.display = "none";
-		 
-        // queryFeatures(event);
-        });  */
-	
-		//###############################################################################################TOWNS COMBOBOX
+        });	
+		
+		function prepareForGrid(){ //hide the things that need hiding before displaying the grid
+					document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+					document.getElementById("queryResults").style.display = "inline";
+					document.getElementById("loading").style.display = "inline";
+					document.getElementById("hideShowButton").innerHTML = "Hide Table"
+		            document.getElementById("instructDiv").style.display = "none";
+		}
+		
+			//###############################################################################################TOWNS COMBOBOX
 	// create store instance referencing data from towns.json
-	var TownStore = new Memory({idProperty : "name",data : json.parse(towns)});
+	var TownStore = new Memory({idProperty : "id",data : json.parse(towns2)});
 	// create FilteringSelect widget, populating its options from the store
 	var townSelect = new FilteringSelect({
 			name : "townSelect",
 			placeHolder : "Select a City/Town",
-			style : "width:200px;left:16px;top:0.6em;position:absolute;z-Index:999;",
+			style : "width:200px;left:64px;top:0.6em;position:absolute;z-Index:999;",
 			required : false,
 			maxHeight : 312,
 			store : TownStore,
 			onChange : function (val) {
 				if (val != "") { //Stops the onChange from a reset from firing this again
-					//placeQueryAndZoom("TOWN = '" + val.toUpperCase() + "'", townsURL)
-					//console.log("TOWN_LINK: " + param_URL + "TOWN = '" + val.toUpperCase() + "'")
-			document.getElementById("gridDiv").style.display = "inline";
-			queryFeatures(val.toUpperCase())
-			
+					document.getElementById("gridDiv").style.display = "inline";
+					prepareForGrid() 
+					queryFeatures(val)
 				}
 			}
 
 		}, "TownSelect");
-	townSelect.startup();
-	
-    // lood up speices json	
-	var MESAStore = new Memory({idProperty : "name1",data : json.parse(scientific)});
-	// create FilteringSelect widget, populating its options from the store
-	var MESASelect = new FilteringSelect({
-			class : "mySelect",
-			name : "MESASelect",
-			placeHolder : "Select a Species",
-			style : "display:none;background-color:white;width:400px;left:16px;top:0.6em;position:absolute;z-Index:999;",
-			required : false,
-			maxHeight : 312,
-			store : MESAStore,
-			onChange : function (val) {
-				if (val != "") { //Stops the onChange from a reset from firing this again
-					makeSpeciesQuery(val);
-					document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
-				}
-			}
-		}, "MESASelect");
-	MESASelect.startup();	
-
-    //Make the species definition query from the filterselect species choice	
-	function makeSpeciesQuery(val){
-		        var QueryMESATask = new QueryTask({
-					url: "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/1"
-					});
-		var params = new Query({
-          returnGeometry: false,
-          outFields: ["TOWN","Most_Recent_Observation","Taxonomic_Group", "MESA_Status"]
-        });
-        params.where ="CommonName = '"+val+"'";
-			QueryMESATask            
-			.execute(params)
-			.then(showResults)
-		   
-            function showResults(response) {
-                var resultItems = [];
-				var secondResult= [];
-				
-                var resultCount = response.features.length;
-                for (var i = 0; i < resultCount; i++) {
-                    var featureAttributes = response.features[i].attributes;
-					resultItems.push("'"+featureAttributes.Town+"'");			
-					secondResult.push({town:featureAttributes.Town.toProperCase(), observed: featureAttributes.Most_Recent_Observation});
-                }
-				document.getElementById("infoSpotOne").innerHTML = "<b>Taxonomic Group:</b> " + featureAttributes.Taxonomic_Group;
-				document.getElementById("infoSpotThree").innerHTML = "<b>MESA Status:</b> " + MESA_Formatter(featureAttributes.MESA_Status);
-				makeTownsGrid(secondResult)
-		        MESAtowns.definitionExpression = "TOWN IN (" +resultItems.toString()+ ")";
-            } 
+	townSelect.startup();	
 		
-	}
-	
-	function destroyGrids(){
-	         if (grid1) {
-                  grid1.destroy();
-                }                
-			if (grid) {
-                  grid.destroy();
-                }
-			}
-	
-    function makeTownsGrid(theTowns){
-                const gridDiv = document.createElement("div");
-                const results = document.getElementById("queryResults");
-				if (highlight) {
-			      highlight.remove();
-			    }
-                results.appendChild(gridDiv)
-				clearbutton.style.display = "inline"; //add the button back with the grid
-				document.getElementById("instructDiv").style.display = "none";  //hide the instructions div
-				destroyGrids()//clear the Grids
-                //deal with the reporting for the other query, clear the species/town info if it is there.
-				document.getElementById("gridTitle").innerHTML = dijit.byId('MESASelect').attr('displayedValue').replace("''","'").replace("''","'");
-		         //document.getElementById("infoSpotOne").innerHTML = "";
-		         document.getElementById("infoSpotTwo").innerHTML = "";
-		         //document.getElementById("infoSpotThree").innerHTML = "";
-				//---- 
-						// Create a new constructor by mixing in the components
-			    var CustomGrid = declare([ Grid, Keyboard, Selection ])
-				grid1 = new CustomGrid({
-					columns: [
-						{ field: 'town', label: 'City/Town' },
-						{ field: 'observed', label: 'Most Recent Observation', formatter: historicFormatter}
-					],
-				selectionMode: 'single', // for Selection; only select a single row at a time
-				cellNavigation: false // for Keyboard; allow only row-level keyboard navigation
-				}, gridDiv);
-				grid1.renderArray(theTowns);	
-
-			grid1.on('dgrid-select', function (event) {
-				// Report the item from the selected row to the console.
-				console.log('Row selected: ', event.rows[0].data.town);
-				clickTownGridHighlight(event.rows[0].data.town);
-			});
-			grid1.on('dgrid-deselect', function (event) {
-				console.log('Row de-selected: ', event.rows[0].data.town);
-			});
-
-/* 			grid.on('.dgrid-row:click', function (event) {
-				var row = grid.row(event);
-				console.log('Row clicked:', row.data);
-			}); */
+		var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+		
+		//phone?
+		  if (isMobile) {
+			view.scale = 3124000;
+			document.getElementById("instructDiv").style.fontSize = "smaller";
+			document.getElementById("gridTitle").style.fontSize = "medium";
+			labelClass.minScale = 2500000;
+			MESAtowns.labelingInfo = [labelClass];
+			view.center = [-71.7, 41];
+			};
 			
-			townSelect.set('value', "");
-}
+			function shrinkTable(){ // doing this seperate grids don't exist on startup - call this after render
+			 x = document.getElementsByClassName("dgrid")
+			  x[0].style.fontSize = "x-small";
+			  grid.resize();
+			}
+		
+			function hideShow(){  //hide or show the table
+			var buttonChoice = document.getElementById("hideShowButton").innerHTML;
+			if (buttonChoice == "Hide Table"){
+			 document.getElementById("hideShowButton").innerHTML = "Show Table"
+			 document.getElementById("queryResults").style.display = "none";
+				}
+				else
+				{
+			 document.getElementById("hideShowButton").innerHTML = "Hide Table"
+			 document.getElementById("queryResults").style.display = "inline";
+			 }
+			}
 
 // highlight features based on a query result from the grid selection
 		function clickTownGridHighlight(nameOfTown){
@@ -366,19 +302,22 @@
 			});
 			}
 
-//search from the filterselect townSelect	
-        function queryFeatures(searchMe) {
-        MESAtowns
-			.queryObjectIds({
-              where: "TOWN = '" + searchMe + "'",
+		
+        function queryFeatures(nameOfTown) {  //query for all species in a particular town
+        // Query the for the town the user clicked      
+          MESAtowns
+            .queryObjectIds({
+			  where: "ObjectID = '" + nameOfTown + "'",
               returnGeometry: false,
               outFields: ["*"]
-			})
+            })
 
- 		  .then(function(objectIds) {
-              if (!objectIds.length) {
-				document.getElementById("loading").style.display = "none";
-				//document.getElementById("instructDiv").style.display = "inline";  //if it's visible don't do anything else show it.
+			  .then(function(objectIds) {
+              if (!objectIds.length) {  //clicked but not on a parcel
+			  document.getElementById("loading").style.display = "none";
+			  if (!grid||!grid1){
+				document.getElementById("gridDiv").style.display = "none"; //show the gridDiv
+			  }
                 return;
               }
 
@@ -388,6 +327,8 @@
                   highlight.remove();
                 }
                 highlight = layerView.highlight(objectIds);
+				document.getElementById("loading").style.display = "none";
+				document.getElementById("instructDiv").style.display = "none";
               });
 
               // Query the for the related features for the features ids found
@@ -396,7 +337,7 @@
                 relationshipId: MESAtowns.relationships[0].id,
                 objectIds: objectIds
               });
-		  })
+            })
 			
             .then(function(relatedFeatureSetByObjectId) {
               if (!relatedFeatureSetByObjectId) {
@@ -407,33 +348,20 @@
               Object.keys(relatedFeatureSetByObjectId).forEach(function(
                 objectId
               ) {
-				clearInfo();  //clear townSpecies info and reload if it exists
+				document.getElementById("gridTitle").innerHTML = "";  //clear Town name
                 // get the attributes of the FeatureSet
                 const relatedFeatureSet = relatedFeatureSetByObjectId[objectId];
-				
                 const rows = relatedFeatureSet.features.map(function(feature) {
-                 //have to deal with the double comma.  It breaks queries but doesn't play nice with this comparison (the double replace is for one value namely - Bayard's Green Adder's-mouth)
-                 if (feature.attributes.CommonName == dijit.byId('MESASelect').attr('value').replace("''","'").replace("''","'")){
-				  document.getElementById("gridTitle").innerHTML = feature.attributes.Town 
-			      document.getElementById("infoSpotOne").innerHTML = "<b>Current Selection:</b> " + feature.attributes.CommonName + " - " + feature.attributes.ScientificName + "<br /><b>Taxonomic Group:</b> " + feature.attributes.Taxonomic_Group +" "+ "<br /><b>MESA Status:</b> " + MESA_Formatter(feature.attributes.MESA_Status);
-				  document.getElementById("infoSpotTwo").innerHTML = "<b>Most Recent Observation:</b> ";
-				  if (isBlank(feature.attributes.Most_Recent_Observation)){document.getElementById("infoSpotThree").innerHTML = " Historic"
-				  } 
-				  else 
-				  {
-					document.getElementById("infoSpotThree").innerHTML = feature.attributes.Most_Recent_Observation}
-			      }
-					else
-					  {
-						document.getElementById("gridTitle").innerHTML = feature.attributes.Town
-					  };
+
+				document.getElementById("gridTitle").innerHTML = feature.attributes.Town;
+
 				  return feature.attributes;
                 });
 
                 if (!rows.length) {
                   return;
                 }
-			  
+
                 // create a new div for the grid of related features
                 // append to queryResults div inside of the gridDiv
                 const gridDiv = document.createElement("div");
@@ -441,7 +369,9 @@
                 results.appendChild(gridDiv);
 
                 // destroy current grid if exists
-				destroyGrids()//clear the Grids
+				if (grid) {
+                  grid.destroy();
+                } 
                 // create new grid to hold the results of the query
                 grid = new Grid(
                   {
@@ -451,7 +381,7 @@
 						{ id: "ScientificName", field: "ScientificName", label: "Scientific Name" },
 						{ id: "Taxonomic_Group", field: "Taxonomic_Group", label: "Taxonomic Group" },
 						{ id: "MESA_Status", field: "MESA_Status", label: "MESA Status", formatter: MESA_Formatter},
-						{ id: "Most_Recent_Observation", field: "Most_Recent_Observation", label: "Most Recent Observation", formatter: historicFormatter}
+						{ id: "Most_Recent_Observation", field: "Most_Recent_Observation", label: "Most Recent Obs.", formatter: historicFormatter}
 					]
                   },
                   gridDiv
@@ -460,42 +390,47 @@
                 //add the data to the grid
                 grid.renderArray(rows);
 				//set def query - single town
-				MESAtowns.definitionExpression = "TOWN = '" + rows[0].Town + "'";
+				MESAtowns.definitionExpression = "TOWN = '" + rows[0].Town + "'"
+				if (isMobile) {shrinkTable()};
+				//set def query - single town				
 				grid.set('sort', 'CommonName');
-				document.getElementById("instructDiv").style.display = "none";
               });
-			  
-              clearbutton.style.display = "inline";
-			  MESASelect.set('value', "");
+              clearbutton.style.display = "inline";//add the button back with the grid
+			  hideShowButton.style.display = "inline";//add the button back with the grid
 			  document.getElementById("loading").style.display = "none";
-              //document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+              document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+			  grid.resize();  //hack to fix the rows infrequently appearing behind the column headers
             })
             .catch(function(error) {
               console.error(error);
             });
         }
-		
-		function clearInfo(){		   
-		   document.getElementById("gridTitle").innerHTML = "";
-		   document.getElementById("infoSpotOne").innerHTML = "";
-		   document.getElementById("infoSpotTwo").innerHTML = "";
-		   document.getElementById("infoSpotThree").innerHTML = "";
-		   }
 
         function clearGrid() {
-		   MESASelect.set('value', "");  //clear the combobox
 		   MESAtowns.definitionExpression = "" //remove the definition expression
 		   document.getElementById("instructDiv").style.display = "inline";
 		   document.getElementById("gridDiv").style.display = "none";
-           clearInfo();
+           document.getElementById("gridTitle").innerHTML = "";
           if (highlight) {
 			  highlight.remove();
 			  }
+			if (grid) {
+                  grid.destroy();
+                } 
 		  destroyGrids()//clear the Grids
           clearbutton.style.display = "none";
+		  hideshowbutton.style.display = "none";
         }
 		
-		view.ui.add(toggle, "bottom-right");
+ 		view.ui.add(toggle, "bottom-right");
+		
+		 var homeBtn = new Home({
+		   id: "myHome",
+           view: view
+         }); 
+
+        //Add the home button to the top left corner of the view
+         view.ui.add(homeBtn, "top-right");
 		
 //---utility functions
 		 function historicFormatter(item){
@@ -513,7 +448,7 @@
                 if ( item == 'E' ) 
                     newItem = 'Endangered'
                 else if ( item == 'SC' )
-                    newItem = 'Speical Concern'
+                    newItem = 'Special Concern'
                  else if ( item == 'T' )
                     newItem = 'Threatened'
          return newItem;
@@ -526,21 +461,22 @@
 		String.prototype.toProperCase = function () {
 			return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 		};
-		
+				
       });
     </script>
   </head>
 
   <body class="claro">
-
-    <div id="gridDiv" class="esri-widget">
-      <span id="gridTitle" style="font-size:36px;line-height: 105%;"></span><img style="display:none;" src ="images/heartbeat.gif" id="loading" alt="Loading" /><br /><span id="infoSpotOne" style="margin-top:1%;font-size:14px"></span><br /><span id="infoSpotTwo" style="margin-top:1%;font-size:14px;"></span> <span id="infoSpotThree"></span>
+    <div id="gridDiv" style="display:none;" class="esri-widget">
+      <span id="gridTitle" style="font-size:22px;line-height: 105%;"></span><img style="display:none;margin-left:14px;" src ="images/heartbeat.gif" id="loading" alt="Loading" />
       
       <div id="queryResults"></div>
-      <button id="clearButton" class="esri-widget">Clear Query/Map</button>
+    <div><button id="clearButton" class="esri-widget">Clear Query/Map</button><button id="hideShowButton" class="esri-widget">Hide Table</button></div>
     </div>
-    <div id="viewDiv"></div><div><div id="TownSelect"></div><div id="MESASelect"></div>  <div id="instructDiv" style="text-align:center; border: 2px solid red;" class="esri-widget">
-        <div>Select a City/Town to view<br /> the species in that area. <br /><!--Click choose a species to see a distribution across the state.--></span><br /><img style="text-align:center;height:4em;width:5em;" src ="images/table.png" id="tablegif" alt="table" /></div>
+    <div id="viewDiv"></div>
+	<div>
+   <div id="TownSelect"></div><div id="instructDiv" style="text-align:center;border: 2px solid red;" class="esri-widget">
+        <div style="font-size:12px;">Select a City/Town to view the species in that area.<br />Use pinch/mouse wheel to zoom in/out.</div></div>
   </div></div>
   </body>
 </html>
