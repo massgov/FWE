@@ -450,11 +450,7 @@
 
 			  .then(function(objectIds) {
               if (!objectIds.length) {  //clicked but not on a parcel
-			  document.getElementById("loading").style.display = "none";
-			  if (!grid||!grid1){
-				document.getElementById("gridDiv").style.display = "none"; //show the gridDiv
-			  }
-			  
+			  document.getElementById("loading").style.display = "none";			  
                 return;
               }
 
