@@ -446,6 +446,7 @@
 			  .then(function(objectIds) {
               if (!objectIds.length) {  //clicked but not on a parcel
 			  document.getElementById("loading").style.display = "none";
+			  clearGrid()
                 return;
               }
 
@@ -469,7 +470,6 @@
 			
             .then(function(relatedFeatureSetByObjectId) {
               if (!relatedFeatureSetByObjectId) {
-				  document.getElementById("gridDiv").style.display = "none";
                 return;
               }
 			  
