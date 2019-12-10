@@ -163,7 +163,7 @@
         const view = new MapView({
           container: "viewDiv",
           map: map,
-		  center: [-71.7, 41.8],
+		  center: [-71.7, 41.6],
 		  zoom: 8,
 		  ui: {
             components: ["attribution"]
@@ -180,9 +180,6 @@
 			fillOpacity: 0.1
           }
         });
-		
-
-
 		 
 		var toggle = new BasemapToggle({
 		view: view,  // The view that provides access to the map's "streets" basemap
@@ -233,7 +230,7 @@
         const clearbutton = document.getElementById("clearButton");
         clearbutton.addEventListener("click", clearGrid);
 		
-		// call clearGrid method when clear is clicked
+		//toggle hide/show button visibility
         const hideshowbutton = document.getElementById("hideShowButton");
         hideshowbutton.addEventListener("click", hideShow);
 
@@ -256,7 +253,6 @@
 					document.getElementById("queryResults").style.display = "inline";
 					document.getElementById("loading").style.display = "inline";
 					document.getElementById("hideShowButton").innerHTML = "Hide Table"
-					//document.getElementById("loading").style.display = "none";  //this can't happen here. has to happen after grid is rendered.
 		            document.getElementById("instructDiv").style.display = "none";
 		}
 		
@@ -281,6 +277,7 @@
 			}
 		}, "MESASelect");
 	MESASelect.startup();
+	
 	//change store for MESA dropdown scientific/common names
 		function changeStore(){
 	var buttonChoice = document.getElementById("storeButton").innerHTML;
@@ -297,16 +294,15 @@
         }
 		
 		var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-		
 		//phone?
 		  if (isMobile) {
 			view.scale = 3124000;
 			document.getElementById("instructDiv").style.fontSize = "smaller";
 			document.getElementById("gridTitle").style.fontSize = "medium";
  			document.getElementById("tablegif").style.display = "none";
-		   document.getElementById("infoSpotOne").style.fontSize = "smaller";
-		   document.getElementById("infoSpotTwo").style.fontSize = "smaller";
-		   document.getElementById("infoSpotThree").style.fontSize = "smaller";
+		    document.getElementById("infoSpotOne").style.fontSize = "smaller";
+		    document.getElementById("infoSpotTwo").style.fontSize = "smaller";
+		    document.getElementById("infoSpotThree").style.fontSize = "smaller";
 			labelClass.minScale = 2500000;
 			MESAtowns.labelingInfo = [labelClass];
 			document.getElementById("widget_MESASelect").style.minWidth = "288px";
@@ -318,8 +314,6 @@
 			  x[0].style.fontSize = "x-small";
 			  grid.resize();
 			}
-
-
 		
 	function hideShow(){  //hide or show the table
 	var buttonChoice = document.getElementById("hideShowButton").innerHTML;
@@ -334,7 +328,8 @@
 		 }
         }
 //two queries coming up == first dropdown, second map click of a town.
-    //Make the species query from the filterselect species choice	
+    //Make the species query from the filterselect species choice
+//MANYSPECIES	
 	function makeSpeciesQuery(val){
 
 		        var QueryMESATask = new QueryTask({
@@ -363,24 +358,24 @@
 				document.getElementById("infoSpotThree").innerHTML = "<br /><b>MESA Status:</b> " + MESA_Formatter(featureAttributes.MESA_Status);
 				
 		        MESAtowns.definitionExpression = "TOWN IN (" +firstResult.toString()+ ")";  //first result definition expression for the map
-				SpeciesInATownGrid(secondResult); //second result to make the SpeciesInATown grid
+				townsWithSpecies(secondResult); //second result to make the SpeciesInATown grid
 	            } 
 		}
 		
 
-				
-    function SpeciesInATownGrid(theTowns){  //query for all towns with a particular species //this is a click event
+//MANYTOWNS				
+    function townsWithSpecies(theTowns){  //query for all towns with a particular species //this is a click event
                 const gridDiv = document.createElement("div");
                 const results = document.getElementById("queryResults");
 				if (highlight) {
 			      highlight.remove();
 			    }
                 results.appendChild(gridDiv)
-				clearbutton.style.display = "inline"; //add the button back with the grid
-			        hideShowButton.style.display = "inline";//add the button back with the grid
+				clearbutton.style.display = "inline";//add the button back with the grid
+				hideShowButton.style.display = "inline";//add the button back with the grid
 				destroyGrids()//clear the Grids
 				
-                //deal with the reporting for the other query, clear the species/town info if it is there.
+                //deal with the reporting for the other query, clear the species/town info if it is there.  Add the speices name in the title
 				document.getElementById("gridTitle").innerHTML = dijit.byId('MESASelect').attr('displayedValue').replace("''","'").replace("''","'");
 		        document.getElementById("infoSpotTwo").innerHTML = "";
 
@@ -421,7 +416,7 @@
                 }
 			}
 
-// highlight features based on a query result from the grid selection
+// highlight features based on a query result from the table-grid selection
 		function clickTownGridHighlight(nameOfTown){
 			view.whenLayerView(MESAtowns).then(function(layerView){
 			 var query = MESAtowns.createQuery();
@@ -450,7 +445,7 @@
 
 			  .then(function(objectIds) {
               if (!objectIds.length) {  //clicked but not on a parcel
-			  document.getElementById("loading").style.display = "none";			  
+			  document.getElementById("loading").style.display = "none";
                 return;
               }
 
@@ -474,10 +469,11 @@
 			
             .then(function(relatedFeatureSetByObjectId) {
               if (!relatedFeatureSetByObjectId) {
+				  document.getElementById("gridDiv").style.display = "none";
                 return;
               }
 			  
-              // Create a grid with the data
+              // Create a grid with the data and populate the information above the grid.
               Object.keys(relatedFeatureSetByObjectId).forEach(function(
                 objectId
               ) {
@@ -538,10 +534,10 @@
 				//set def query - single town
 				grid.set('sort', 'CommonName');
               });
-                          clearbutton.style.display = "inline";//add the button back with the grid
-		  	  hideShowButton.style.display = "inline";//add the button back with the grid
+              clearbutton.style.display = "inline";//add the button back with the grid
+			  hideShowButton.style.display = "inline";//add the button back with the grid
 			  document.getElementById("loading").style.display = "none";
-                          document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+              document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
 			  grid.resize();  //hack to fix the rows infrequently appearing behind the column headers
             })
             .catch(function(error) {
@@ -566,7 +562,7 @@
 			  highlight.remove();
 			  }
 		  destroyGrids()//clear the Grids
-                  clearbutton.style.display = "none";
+          clearbutton.style.display = "none";
 		  hideshowbutton.style.display = "none";
         }
 		
@@ -623,7 +619,7 @@
     </div>
     <div id="viewDiv"></div>
 	<div>
-	  <div style="inline-block;" id="MESASelect"></div><div id="instructDiv" style="text-align:center;" class="esri-widget"><button style="margin-bottom:5px;" id="storeButton" class="esri-widget"><b>Switch to Common Name</b></button>
+	  <div style="display:inline-block;" id="MESASelect"></div><div id="instructDiv" style="text-align:center;" class="esri-widget"><button style="margin-bottom:5px;" id="storeButton" class="esri-widget"><b>Switch to Common Name</b></button>
         <div style="font-size:12px;">Click on a City/Town to view the species in that area.<br />Use pinch/mouse wheel to zoom in/out. <br />Select a species for observation information.</div><img style="text-align:center;height:4em;width:5em;display:none;" src ="images/table.png" id="tablegif" alt="table" /></div>
   </div></div>
   </body>
