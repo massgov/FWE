@@ -235,10 +235,10 @@
         const hideshowbutton = document.getElementById("hideShowButton");
         hideshowbutton.addEventListener("click", hideShow);
 
-        view.on("click", function(event) {
+/*         view.on("click", function(event) {
 			prepareForGrid() 
             queryFeatures(event);
-        });
+        }); */
 	
 	    const storebutton = document.getElementById("storeButton");
         storebutton.addEventListener("click", changeStore);
@@ -250,10 +250,11 @@
         });	
 		
 		function prepareForGrid(){ //hide the things that need hiding before displaying the grid
-					document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
-					document.getElementById("queryResults").style.display = "inline";
+		//			document.getElementById("gridDiv").style.display = "inline"; //show the gridDiv
+		//			document.getElementById("queryResults").style.display = "inline";
 					document.getElementById("loading").style.display = "inline";
-					document.getElementById("hideShowButton").innerHTML = "Hide Table";
+					document.getElementById("hideShowButton").style.display = "inline";
+		//			document.getElementById("hideShowButton").innerHTML = "Hide Table";
 		            document.getElementById("instructDiv").style.display = "none";
 		}
 		
@@ -348,6 +349,12 @@
 		 {
 		 document.getElementById("hideShowButton").innerHTML = "Hide Table"
          document.getElementById("queryResults").style.display = "inline";
+		 if (grid1) {
+                  grid1.resize();
+                }                
+			if (grid) {
+                  grid.resize();
+                }
 		 }
         }
 		
@@ -592,8 +599,8 @@ function queryFeatures(theTownName) {  //query for all species in a particular t
 		
 		 var homeBtn = new Home({
 		   id: "myHome",
-                   view: view
-                 }); 
+           view: view
+         }); 
 
         //Add the home button to the top left corner of the view
          view.ui.add(homeBtn, "top-right");
