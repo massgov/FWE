@@ -1,0 +1,204 @@
+html,body,#mapDiv{
+ padding:0;
+ margin:0;
+ height:100%;
+ width:100%;
+ overflow:hidden;
+}
+/* #topHeader{
+position:relative; min-height:2.2em;
+} */
+.esriScalebarLabel{
+font-weight:bold;color:black;
+}
+.claro .dijitButtonNode * {
+    font-family: Arial, Helvetica, sans-serif;
+	color:black;
+}
+.dijitNavigationIcon {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/compass.gif');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.dijitPrintIcon {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/print.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.dijitAboutIcon {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/DFGlogo_icon.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.dijitLayersIcon {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/layers.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.dijitWildlifeIcon {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/DFWlogo_icon.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.dijitWildlifeLegendIcon {
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/icon_legend.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.dijitFactSheet {
+  background-image: url('../images/pdf.gif');
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+}
+.dijitFactSheetDisabled {
+  background-image: url('../images/pdf_grey.gif');
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+}
+.dijitPermalink  {
+  background-image: url('../images/permalink.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  }
+  
+  .FacebookShare  {
+  background-image: url('../images/facebook.gif');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  }
+  
+  .TwitterShare  {
+  background-image: url('../images/twitter.gif');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  }
+  
+  .RedditShare  {
+  background-image: url('../images/reddit.gif');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  }
+  
+.dijitPermalinkDisabled{
+  background-image: url('../images/permalink_grey.png');
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+.esriBasemapGallerySelectedNode .esriBasemapGalleryThumbnail{ 
+  border-color: #66FFFF !important; 
+}
+.esriScalebar { width:auto; left: 0; bottom: 10px; color: Black; padding: 8px 32px 8px 8px; background-color: White; opacity: 0.85; filter: alpha(opacity=85); border-radius: 4px; }
+
+#sliderWrapper {
+	position:absolute; 
+	right: 11.6em; 
+	top:3.4em; 
+	z-Index: 40;
+	border: 1px black solid;
+	width: 160px;
+	height: 40px;
+	background: #fff;
+	-moz-box-shadow: 0 0 5px #888;
+	-webkit-box-shadow: 0 0 5px #888;
+	box-shadow: 0 0 5px #888;
+}
+
+#sliderLabels {
+	position: relative; 
+	top: -1px; 
+	height: 1.2em; 
+	font-size: 80%; 
+	font-weight: bold;
+	font-family: arial;
+	color: #444;
+	padding: 1px;
+	margin: 2px 8px 0 6px;
+}
+
+#sliderOpacity {
+	width:160px;
+}
+
+.esriPopup .actionsPane .zoomTo {
+     display: none;
+}
+.esriPopup .titleButton.maximize {
+     display: none;
+}
+/* Put the popup above other map elements */
+/*
+.esriPopup {
+z-index: 999 !important;
+}
+*/
+@media screen and (max-width: 745px) {
+#legend {
+display:none;
+z-index: 300;
+}
+#dfwLogoImage {
+display:none;
+z-index: 300;
+}
+#button_span {
+display:none;
+}
+#topHeader{
+position:relative;
+}
+.dld_hdr {
+color:green;
+}
+.mobileVis{
+display:none;
+}
+#sliderWrapper {
+left:6.3em;
+width:8em;
+}
+#sliderOpacity{
+width:8em;
+}
+.esriBasemapGalleryNode{
+display:block !important;
+clear:both;
+}
+.basemapInnerContent {
+width:7.6em !important;
+height:22.6em !important;
+}
+/* .CloseMapDialogButton{
+	right:3em;
+} */
