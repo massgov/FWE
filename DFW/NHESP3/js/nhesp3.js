@@ -266,7 +266,7 @@
 	function makeSpeciesQuery(val){
 	
 		        var QueryMESATask = new QueryTask({
-					url: "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/1"
+					url: "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Public_Town_MESA_Spp_List/FeatureServer/1"
 					});
 		var params = new Query({
           returnGeometry: false,
