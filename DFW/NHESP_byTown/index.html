@@ -104,9 +104,9 @@
         "dojo/text!./js/towns2.json",
         "dojo/domReady!"
       ], function(Map, Basemap, MapView, FeatureLayer, BasemapToggle, Expand, Home, Query, QueryTask, declare, Keyboard, Selection, Grid, OnDemandGrid, parser, FilteringSelect, Memory, json, towns2) {
-		var MESATOWN_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/0"; 
+		var MESATOWN_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Public_Town_MESA_Spp_List/FeatureServer/0"; 
 		//MESA Towns layer
-        var MESATABLE_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/1"; //Table layer
+        var MESATABLE_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Public_Town_MESA_Spp_List/FeatureServer/1"; //Table layer
 		
 		parser.parse(); //scan DOM, instantiate nodes with dojo attributes
 //LABLES		
@@ -303,11 +303,12 @@
 			}
 
 		
-        function queryFeatures(nameOfTown) {  //query for all species in a particular town
+        function queryFeatures(OBJID) {  //query for all species in a particular town
+		MESAtowns.definitionExpression = "ObjectID = '" + OBJID + "'"
         // Query the for the town the user clicked      
           MESAtowns
             .queryObjectIds({
-			  where: "ObjectID = '" + nameOfTown + "'",
+			  where: "ObjectID = '" + OBJID + "'",
               returnGeometry: false,
               outFields: ["*"]
             })
@@ -390,7 +391,7 @@
                 //add the data to the grid
                 grid.renderArray(rows);
 				//set def query - single town
-				MESAtowns.definitionExpression = "TOWN = '" + rows[0].Town + "'"
+
 				if (isMobile) {shrinkTable()};
 				//set def query - single town				
 				grid.set('sort', 'CommonName');
