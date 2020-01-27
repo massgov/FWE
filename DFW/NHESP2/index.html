@@ -117,9 +117,9 @@
         "dojo/text!./js/scientific.json",
         "dojo/domReady!"
       ], function(Map, Basemap, MapView, FeatureLayer, BasemapToggle, Expand, Home, Query, QueryTask, declare, Keyboard, Selection, Grid, OnDemandGrid, parser, FilteringSelect, Memory, json, common, scientific) {
-		var MESATOWN_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/0"; 
+		var MESATOWN_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Public_Town_MESA_Spp_List/FeatureServer/0"; 
 		//MESA Towns layer
-        var MESATABLE_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/1"; //Table layer
+        var MESATABLE_URL = "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Public_Town_MESA_Spp_List/FeatureServer/1"; //Table layer
 		
 		parser.parse(); //scan DOM, instantiate nodes with dojo attributes
 		
@@ -333,7 +333,7 @@
 	function makeSpeciesQuery(val){
 
 		        var QueryMESATask = new QueryTask({
-					url: "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/MESA_BY_TOWN/FeatureServer/1"
+					url: "https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/Public_Town_MESA_Spp_List/FeatureServer/1"
 					});
 		var params = new Query({
           returnGeometry: false,
