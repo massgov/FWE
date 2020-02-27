@@ -162,7 +162,7 @@
 		            document.getElementById("instructDiv").style.display = "none";
 		}
 		
-		
+			var spHolder = "";
 	//###############################################################################################TOWNS COMBOBOX
 	// create store instance referencing data from towns.json
 	var TownStore = new Memory({idProperty : "name",data : json.parse(towns2)});
@@ -185,7 +185,7 @@
 	townSelect.startup();	
 		
 	//###############################################################################################SPECIES COMBOBOX
-	var spHolder;
+
 	var MESAStore = new Memory({idProperty : "name1", data : json.parse(scientific)});
 	// create FilteringSelect widget, populating its options from the store
 	var MESASelect = new FilteringSelect({
