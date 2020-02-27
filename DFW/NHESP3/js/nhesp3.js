@@ -185,6 +185,7 @@
 	townSelect.startup();	
 		
 	//###############################################################################################SPECIES COMBOBOX
+	var spHolder;
 	var MESAStore = new Memory({idProperty : "name1", data : json.parse(scientific)});
 	// create FilteringSelect widget, populating its options from the store
 	var MESASelect = new FilteringSelect({
@@ -197,8 +198,11 @@
 			store : MESAStore,
 			onChange : function (val) {
 				if (val != "") { //Stops the onChange from a reset from firing this again
+				    spHolder = dijit.byId('MESASelect').attr('value');
+					fullSpeices = dijit.byId('MESASelect').attr('displayedValue');
 					makeSpeciesQuery(val);
 					prepareForGrid();
+					MESASelect.set('value', "");
 				}
 
 			}
@@ -312,7 +316,7 @@
 				destroyGrids()//clear the Grids
 				
                 //deal with the reporting for the other query, clear the species/town info if it is there.
-				document.getElementById("gridTitle").innerHTML = dijit.byId('MESASelect').attr('displayedValue').replace("''","'").replace("''","'");
+				document.getElementById("gridTitle").innerHTML = fullSpeices.replace("''","'").replace("''","'");
 		        document.getElementById("infoSpotTwo").innerHTML = ""; //hides most recent observation text
 
 				// Create a new constructor by mixing in the components
@@ -412,7 +416,7 @@ function queryFeatures(theTownName) {  //query for all species in a particular t
                 const rows = relatedFeatureSet.features.map(function(feature) {
                  //have to deal with the double comma.  It breaks queries but doesn't play nice with this comparison (the double replace is for one value namely - Bayard's Green Adder's-mouth)
 				 //IF this town has the selected species in it then fill out these infoSpots
-                 if (feature.attributes.CommonName == dijit.byId('MESASelect').attr('value').replace("''","'").replace("''","'")){
+                 if (feature.attributes.CommonName == spHolder.replace("''","'").replace("''","'")){
 				  document.getElementById("gridTitle").innerHTML = feature.attributes.Town;
 				  
 			      document.getElementById("infoSpotOne").innerHTML = "<b>Current Selection:</b> " + feature.attributes.CommonName + " - " + feature.attributes.ScientificName + "<br /><b>Taxonomic Group:</b> " + feature.attributes.Taxonomic_Group +" "+ "<br /><b>MESA Status:</b> " + MESA_Formatter(feature.attributes.MESA_Status);
