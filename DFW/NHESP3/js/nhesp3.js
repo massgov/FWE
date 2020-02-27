@@ -191,7 +191,7 @@
 	var MESASelect = new FilteringSelect({
 			class : "mySelect",
 			name : "MESASelect",
-			placeHolder : "Select a species",
+			placeHolder : "Select a Species",
 			style : "background-color:white;min-width:400px;width:auto;left:8px;top:0.3em;position:absolute;z-Index:999;",
 			required : false,
 			maxHeight : 312,
