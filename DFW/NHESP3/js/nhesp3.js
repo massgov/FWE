@@ -516,7 +516,7 @@ function queryFeatures(theTownName) {  //query for all species in a particular t
                 if ( item == null )
                     newItem = 'Historic'
 				else 
-					newItem = item;
+			        newItem = item;
          return newItem;
         }
 		
@@ -529,6 +529,8 @@ function queryFeatures(theTownName) {  //query for all species in a particular t
                     newItem = 'Special Concern'
                  else if ( item == 'T' )
                     newItem = 'Threatened'
+			else 
+			newItem = item;
          return newItem;
         }
 	
