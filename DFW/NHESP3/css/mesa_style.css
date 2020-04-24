@@ -4,6 +4,7 @@
         width: 100%;
         margin: 0;
         padding: 0;
+	border: black 2px solid;
       }
       #gridDiv {
         padding: 8px;
