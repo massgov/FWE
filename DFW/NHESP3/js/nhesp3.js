@@ -69,7 +69,7 @@
           container: "viewDiv",
           map: map,
 		  center: [-71.7, 42],
-		  zoom: 9,
+		  zoom: 8,
 		  ui: {
             components: ["attribution"]
           },
