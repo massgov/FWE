@@ -231,7 +231,7 @@ require([
 		if (text.length != 0) {
 		stockingDialog = new Dialog({
 			title : dataWaterBody,
-			content : "<div><b>"+dataTown+"</b><br /><br /><b>Stocking date(s):</b> "+" Spring 2020" + "<br />---<br /><b>Species:</b> " + text+"</div>",
+			content : "<div><b>"+dataTown+"</b><br /><br /><b>Stocking date(s):</b> "+" Fall 2020" + "<br />---<br /><b>Species:</b> " + text+"</div>",
 			style : "width: 300px",
 			duration: 1000
 		});
