@@ -30,7 +30,6 @@
             return;
         }
 		var data = response.getDataTable();
-		data.sort([{column: 0}]);  //Data Sort
 		// Modify table data so it is correctly sorted by pond name AND clickable
         	var numRows = data.getNumberOfRows();
         	for (var i=0; i<numRows; i++) {
